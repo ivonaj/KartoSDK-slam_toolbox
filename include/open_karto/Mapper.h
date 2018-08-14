@@ -23,6 +23,12 @@
 
 #include <Eigen/Core>
 
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+#include "tbb/tbb.h"
+#include <algorithm>
+#include <chrono>
+
 #include <open_karto/Karto.h>
 
 namespace karto
@@ -1051,6 +1057,11 @@ namespace karto
 
   public:
     /**
+     * Parallelize scan matching
+     */
+    void operator() (const kt_double& y) const;
+
+    /**
      * Create a scan matcher with the given parameters
      */
     static ScanMatcher* Create(Mapper* pMapper,
@@ -1196,6 +1207,15 @@ namespace karto
     Grid<kt_double>* m_pSearchSpaceProbs;
 
     GridIndexLookup<kt_int8u>* m_pGridLookup;
+
+    std::pair<kt_double, Pose2>* m_pPoseResponse;
+    std::vector<kt_double> m_xPoses;
+    std::vector<kt_double> m_yPoses;
+    Pose2 m_rSearchCenter;
+    kt_double m_searchAngleOffset;
+    kt_int32u m_nAngles;
+    kt_double m_searchAngleResolution;
+    kt_bool m_doPenalize;
   };  // ScanMatcher
 
   ////////////////////////////////////////////////////////////////////////////////////////
