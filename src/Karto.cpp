@@ -26,11 +26,20 @@
 #include "open_karto/Karto.h"
 
 #include <boost/serialization/export.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-//BOOST_CLASS_EXPORT_IMPLEMENT(karto::Object);
-//BOOST_CLASS_EXPORT_IMPLEMENT(karto::Sensor);
-//BOOST_CLASS_EXPORT_IMPLEMENT(karto::Name);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::NonCopyable);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Object);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Sensor);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::SensorData);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Name);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::LaserRangeScan);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::LocalizedRangeScan);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::SensorManager);
+//BOOST_CLASS_EXPORT_IMPLEMENT(karto::LaserRangeFinder);
+
+
+
+
+
 
 
 namespace karto

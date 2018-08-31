@@ -22,12 +22,13 @@
 #include <set>
 #include <list>
 #include <iterator>
-
+#include <open_karto/Types.h>
 #include <math.h>
 #include <assert.h>
+#include <boost/serialization/vector.hpp>
 
 #include "open_karto/Mapper.h"
-
+BOOST_CLASS_EXPORT(karto::MapperSensorManager)
 namespace karto
 {
 
@@ -2207,23 +2208,44 @@ namespace karto
       m_Initialized = true;
 	}
   }
-
-  void Mapper::SaveToFile(const std::string& filename) 
+  void Mapper::SaveToFile(const std::string& filename)
   {
 	  printf("Save To File\n");
 	  std::ofstream ofs(filename.c_str());
-	  boost::archive::xml_oarchive oa(ofs);
-	  //save class state to archive
-	  oa << BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
-  }	
+	  boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);//using binary archive because it has support for NanN values	  //save class state to archive
+//    boost::archive::binary_oarchive oa(ofs);
+//    oa.template register_type<MapperSensorManager>();
+//    oa.template register_type<SensorManager>();
+//    oa.template register_type<LocalizedRangeScan>();
+
+
+    oa << BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
+  }
 
   void Mapper::LoadFromFile(const std::string& filename) 
   {
     printf("Load From File\n");
 	  std::ifstream ifs(filename.c_str());
-	  boost::archive::xml_iarchive ia(ifs);
+//    boost::archive::binary_iarchive ia(ifs);
+	  boost::archive::binary_iarchive ia(ifs, boost::archive::no_codecvt);
 	  //read class state from archive
-	  ia >> BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
+
+//    ia.template register_type<MapperSensorManager>();
+//    ia.template register_type<SensorManager>();
+//    ia.template register_type<LocalizedRangeScan>();
+
+    MapperSensorManager* mapper = nullptr;
+    LaserRangeScan* pt = nullptr;
+    LocalizedRangeScan *d;
+    Pose2 one_scan;
+    kt_int32u name;
+
+    CustomDataVector cus;
+    std::vector<kt_double> rrvec;
+    kt_double reading;
+    ia >> BOOST_SERIALIZATION_NVP(mapper);
+    m_pMapperSensorManager = mapper;
+
   }	
 
   void Mapper::Reset()
