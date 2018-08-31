@@ -5292,21 +5292,13 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   template<class Archive>
   void serialize(Archive &ar, const unsigned int version)
   {
-//    ar & BOOST_SERIALIZATION_NVP(m_pRangeReadings);
     ar & BOOST_SERIALIZATION_NVP(m_NumberOfRangeReadings);
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SensorData);
-//    for (int i = 0; i < 1; i++)
-//    {
-//      std::stringstream ss;
-//      ss << "m_pRangeReadings" << i;
-//      std::string mpRangeReadings = ss.str();
-//      ar & boost::serialization::make_nvp(mpRangeReadings.c_str(), *(m_pRangeReadings+i));
-//
-//    }
-//      if (m_pRangeReadings == NULL)
-//        m_pRangeReadings = new kt_double[m_NumberOfRangeReadings];//something strange
 
-      ar & boost::serialization::make_array<kt_double>(m_pRangeReadings, m_NumberOfRangeReadings);
+   if (Archive::is_loading::value)
+       m_pRangeReadings = new kt_double[m_NumberOfRangeReadings];
+
+   ar & boost::serialization::make_array<kt_double>(m_pRangeReadings, m_NumberOfRangeReadings);
 
   }
   };  // LaserRangeScan
