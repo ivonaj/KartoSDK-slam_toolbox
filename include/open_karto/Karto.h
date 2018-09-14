@@ -5405,6 +5405,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     mutable boost::shared_mutex m_Lock;
 
   public:
+      inline void callUpdate()
+      {
+        const_cast<LocalizedRangeScan*>(this)->Update();
+      }
+
     /**
      * Gets the odometric pose of this scan
      * @return odometric pose of this scan
@@ -5464,6 +5469,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       return m_BarycenterPose;
     }
 
+    inline void SetBarycenterPose(Pose2& bcenter)
+    {
+      m_BarycenterPose = bcenter;
+    }
+
     /**
      * Gets barycenter if the given parameter is true, otherwise returns the scanner pose
      * @param useBarycenter
@@ -5490,6 +5500,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     inline Pose2 GetSensorPose() const
     {
       return GetSensorAt(m_CorrectedPose);
+    }
+
+    inline void SetIsDirty(kt_bool& rIsDirty)
+    {
+        m_IsDirty = rIsDirty;
     }
 
     /**
@@ -5540,6 +5555,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       return m_BoundingBox;
     }
 
+    inline void SetBoundingBox(BoundingBox2& bbox)
+    {
+      m_BoundingBox = bbox;
+    }
+
     /**
      * Get point readings in local coordinates
      */
@@ -5562,6 +5582,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       {
         return m_UnfilteredPointReadings;
       }
+    }
+
+    inline void SetPointReadings(PointVectorDouble& points)
+    {
+      m_PointReadings = points;
     }
 
   private:
