@@ -5511,6 +5511,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Computes the robot pose given the corrected scan pose
      * @param rScanPose pose of the sensor
      */
+
     void SetSensorPose(const Pose2& rScanPose)
     {
       Pose2 deviceOffsetPose2 = GetLaserRangeFinder()->GetOffsetPose();
@@ -5584,9 +5585,19 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       }
     }
 
-    inline void SetPointReadings(PointVectorDouble& points)
+    inline void SetPointReadings(PointVectorDouble& points, kt_bool setFiltered = false)
     {
-      m_PointReadings = points;
+        if (setFiltered == true)
+
+        {
+            m_PointReadings.clear();
+            m_PointReadings = points;
+        }
+        else
+        {
+            m_UnfilteredPointReadings.clear();
+            m_UnfilteredPointReadings = points;
+        }
     }
 
   private:
@@ -6106,6 +6117,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       kt_double minRange = pScan->GetLaserRangeFinder()->GetMinimumRange();
 
       Vector2<kt_double> scanPosition = pScan->GetSensorPose().GetPosition();
+//      Vector2<kt_double> scanPosition = pScan->GetCorrectedPose().GetPosition();
 
       // get scan point readings
       const PointVectorDouble& rPointReadings = pScan->GetPointReadings(false);
