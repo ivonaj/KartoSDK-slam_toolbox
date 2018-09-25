@@ -6117,8 +6117,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       kt_double minRange = pScan->GetLaserRangeFinder()->GetMinimumRange();
 
       Vector2<kt_double> scanPosition = pScan->GetSensorPose().GetPosition();
-//      Vector2<kt_double> scanPosition = pScan->GetCorrectedPose().GetPosition();
-
       // get scan point readings
       const PointVectorDouble& rPointReadings = pScan->GetPointReadings(false);
 
