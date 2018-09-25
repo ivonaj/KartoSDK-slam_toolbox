@@ -738,10 +738,8 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
-		ar & BOOST_SERIALIZATION_NVP(m_Name);
-//		ar & BOOST_SERIALIZATION_NVP(m_pParameterManager);
-//	    ar & boost::serialization::make_nvp("m_pParameterManager",*m_pParameterManager);
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+    ar & BOOST_SERIALIZATION_NVP(m_Name);
 	}
 
   private:
@@ -3812,10 +3810,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Sensor map
      */
     SensorManagerMap m_Sensors;
-
-
-
-
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -5405,11 +5399,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     mutable boost::shared_mutex m_Lock;
 
   public:
-      inline void callUpdate()
-      {
-        const_cast<LocalizedRangeScan*>(this)->Update();
-      }
-
     /**
      * Gets the odometric pose of this scan
      * @return odometric pose of this scan
@@ -5587,7 +5576,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
     inline void SetPointReadings(PointVectorDouble& points, kt_bool setFiltered = false)
     {
-        if (setFiltered == true)
+        if (setFiltered)
 
         {
             m_PointReadings.clear();
