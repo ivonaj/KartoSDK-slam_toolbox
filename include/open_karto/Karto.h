@@ -5266,7 +5266,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      m_pRangeReadings = new kt_double[m_NumberOfRangeReadings];
    }
    ar & boost::serialization::make_array<kt_double>(m_pRangeReadings, m_NumberOfRangeReadings);
-
   }
   };  // LaserRangeScan
 
@@ -5549,17 +5548,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
     inline void SetPointReadings(PointVectorDouble& points, kt_bool setFiltered = false)
     {
-        if (setFiltered)
-
-        {
-            m_PointReadings.clear();
-            m_PointReadings = points;
-        }
-        else
-        {
-            m_UnfilteredPointReadings.clear();
-            m_UnfilteredPointReadings = points;
-        }
+      if (setFiltered)
+      {
+        m_PointReadings.clear();
+        m_PointReadings = points;
+      }
+      else
+      {
+        m_UnfilteredPointReadings.clear();
+        m_UnfilteredPointReadings = points;
+      }
     }
 
   private:
@@ -6890,19 +6888,5 @@ BOOST_CLASS_EXPORT_KEY(karto::Name);
 BOOST_CLASS_EXPORT_KEY(karto::SensorData);
 BOOST_CLASS_EXPORT_KEY(karto::LocalizedRangeScan);
 BOOST_CLASS_EXPORT_KEY(karto::LaserRangeScan);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif  // OPEN_KARTO_KARTO_H
