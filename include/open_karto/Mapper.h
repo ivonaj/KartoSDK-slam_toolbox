@@ -1355,13 +1355,11 @@ namespace karto
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		//ar & boost::serialization::make_nvp("m_Values_1", m_Values[1]);
 		ar & BOOST_SERIALIZATION_NVP(m_ScanManagers);
 		ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumSize);
 		ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumDistance);
 		ar & BOOST_SERIALIZATION_NVP(m_NextScanId);
 		ar & BOOST_SERIALIZATION_NVP(m_Scans);
-
 	}
 
   private:

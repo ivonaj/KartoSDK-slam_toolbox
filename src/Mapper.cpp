@@ -2208,17 +2208,12 @@ namespace karto
       m_Initialized = true;
 	}
   }
+
   void Mapper::SaveToFile(const std::string& filename)
   {
 	  printf("Save To File\n");
 	  std::ofstream ofs(filename.c_str());
-	  boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);//using binary archive because it has support for NanN values	  //save class state to archive
-//    boost::archive::binary_oarchive oa(ofs);
-//    oa.template register_type<MapperSensorManager>();
-//    oa.template register_type<SensorManager>();
-//    oa.template register_type<LocalizedRangeScan>();
-
-
+	  boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);
     oa << BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
   }
 
@@ -2226,26 +2221,8 @@ namespace karto
   {
     printf("Load From File\n");
 	  std::ifstream ifs(filename.c_str());
-//    boost::archive::binary_iarchive ia(ifs);
 	  boost::archive::binary_iarchive ia(ifs, boost::archive::no_codecvt);
-	  //read class state from archive
-
-//    ia.template register_type<MapperSensorManager>();
-//    ia.template register_type<SensorManager>();
-//    ia.template register_type<LocalizedRangeScan>();
-
-    MapperSensorManager* mapper = nullptr;
-    LaserRangeScan* pt = nullptr;
-    LocalizedRangeScan *d;
-    Pose2 one_scan;
-    kt_int32u name;
-
-    CustomDataVector cus;
-    std::vector<kt_double> rrvec;
-    kt_double reading;
-    ia >> BOOST_SERIALIZATION_NVP(mapper);
-    m_pMapperSensorManager = mapper;
-
+    ia >> BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
   }	
 
   void Mapper::Reset()

@@ -3679,27 +3679,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      */
     static SensorManager* GetInstance();
 
-  friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive &ar, const unsigned int version)
-  {
-//      int idx = 0;
-//      for (std::map<Name,Sensor*>::iterator it=m_Sensors.begin(); it!=m_Sensors.end(); ++it)
-//      {
-//          std::cout << it->first << " => " << it->second << '\n';
-//
-//          std::stringstream ss1;
-//          std::stringstream ss2;
-//          ss1 << "m_Sensors" << idx << "_Name";
-//          ss2 << "m_Sensors" << idx << "_Sensor";
-//          std::string tag1 = ss1.str();
-//          std::string tag2 = ss2.str();
-//          ar & boost::serialization::make_nvp(tag1.c_str(), it->first);
-//          ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
-//          idx++;
-//      }
-//      ar & BOOST_SERIALIZATION_NVP(m_Sensors);
-  }
   public:
     /**
      * Registers a sensor by it's name. The Sensor name must be unique, if not sensor is not registered
@@ -4329,12 +4308,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     kt_int32u m_NumberOfRangeReadings;
 
     // static std::string LaserRangeFinderTypeNames[6];
-    friend class boost::serialization::access;
-      template<class Archive>
-      void serialize(Archive &ar, const unsigned int version)
-      {
-//          ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Sensor);
-      }
   };  // LaserRangeFinder
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -5135,7 +5108,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     ar & BOOST_SERIALIZATION_NVP(m_Time);
     ar & BOOST_SERIALIZATION_NVP(m_CustomData);
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
-
   }
 };
 
@@ -5290,8 +5262,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SensorData);
 
    if (Archive::is_loading::value)
-       m_pRangeReadings = new kt_double[m_NumberOfRangeReadings];
-
+   {
+     m_pRangeReadings = new kt_double[m_NumberOfRangeReadings];
+   }
    ar & boost::serialization::make_array<kt_double>(m_pRangeReadings, m_NumberOfRangeReadings);
 
   }
@@ -6910,12 +6883,10 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   /*@}*/
 };  // namespace karto
 
-BOOST_CLASS_EXPORT_KEY(karto::SensorManager);
 BOOST_CLASS_EXPORT_KEY(karto::NonCopyable);
 BOOST_CLASS_EXPORT_KEY(karto::Object);
 BOOST_CLASS_EXPORT_KEY(karto::Sensor);
 BOOST_CLASS_EXPORT_KEY(karto::Name);
-
 BOOST_CLASS_EXPORT_KEY(karto::SensorData);
 BOOST_CLASS_EXPORT_KEY(karto::LocalizedRangeScan);
 BOOST_CLASS_EXPORT_KEY(karto::LaserRangeScan);
