@@ -734,13 +734,13 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     /**
      * Serialization: class Object 
      */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
-    ar & BOOST_SERIALIZATION_NVP(m_Name);
-	}
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+      ar & BOOST_SERIALIZATION_NVP(m_Name);
+    }
 
   private:
     Object(const Object&);
