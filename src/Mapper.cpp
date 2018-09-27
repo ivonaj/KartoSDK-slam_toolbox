@@ -480,6 +480,60 @@ namespace karto
     return bestResponse;
   }
 
+  void ScanMatcher::operator() (const kt_double& y) const
+  {
+    kt_int32u poseResponseCounter;
+    kt_int32u x_pose;
+    kt_int32u y_pose = std::find(m_yPoses.begin(), m_yPoses.end(), y) - m_yPoses.begin();
+
+    const kt_int32u size_x = m_xPoses.size();
+
+    kt_double newPositionY = m_rSearchCenter.GetY() + y;
+    kt_double squareY = math::Square(y);
+
+    for ( std::vector<kt_double>::const_iterator xIter = m_xPoses.begin(); xIter != m_xPoses.end(); ++xIter )
+    {
+      x_pose = std::distance(m_xPoses.begin(), xIter);
+      kt_double x = *xIter;
+      kt_double newPositionX = m_rSearchCenter.GetX() + x;
+      kt_double squareX = math::Square(x);
+
+      Vector2<kt_int32s> gridPoint = m_pCorrelationGrid->WorldToGrid(Vector2<kt_double>(newPositionX, newPositionY));
+      kt_int32s gridIndex = m_pCorrelationGrid->GridIndex(gridPoint);
+      assert(gridIndex >= 0);
+
+      kt_double angle = 0.0;
+      kt_double startAngle = m_rSearchCenter.GetHeading() - m_searchAngleOffset;
+      for (kt_int32u angleIndex = 0; angleIndex < m_nAngles; angleIndex++)
+      {
+        angle = startAngle + angleIndex * m_searchAngleResolution;
+
+        kt_double response = GetResponse(angleIndex, gridIndex);
+        if (m_doPenalize && (math::DoubleEqual(response, 0.0) == false))
+        {
+          // simple model (approximate Gaussian) to take odometry into account
+          kt_double squaredDistance = squareX + squareY;
+          kt_double distancePenalty = 1.0 - (DISTANCE_PENALTY_GAIN *
+                                             squaredDistance / m_pMapper->m_pDistanceVariancePenalty->GetValue());
+          distancePenalty = math::Maximum(distancePenalty, m_pMapper->m_pMinimumDistancePenalty->GetValue());
+
+          kt_double squaredAngleDistance = math::Square(angle - m_rSearchCenter.GetHeading());
+          kt_double anglePenalty = 1.0 - (ANGLE_PENALTY_GAIN *
+                                          squaredAngleDistance / m_pMapper->m_pAngleVariancePenalty->GetValue());
+          anglePenalty = math::Maximum(anglePenalty, m_pMapper->m_pMinimumAnglePenalty->GetValue());
+
+          response *= (distancePenalty * anglePenalty);
+        }
+
+        // store response and pose
+        poseResponseCounter = (y_pose*size_x + x_pose)*(m_nAngles) + angleIndex;
+        m_pPoseResponse[poseResponseCounter] = std::pair<kt_double, Pose2>(response, Pose2(newPositionX, newPositionY,
+                                                                         math::NormalizeAngle(angle)));
+      }
+    }
+    return;
+  }
+
   /**
    * Finds the best pose for the scan centering the search in the correlation grid
    * at the given pose and search in the space by the vector and angular offsets
@@ -519,110 +573,73 @@ namespace karto
 
     // calculate position arrays
 
-    std::vector<kt_double> xPoses;
+    m_xPoses.clear();
     kt_int32u nX = static_cast<kt_int32u>(math::Round(rSearchSpaceOffset.GetX() *
                                           2.0 / rSearchSpaceResolution.GetX()) + 1);
     kt_double startX = -rSearchSpaceOffset.GetX();
     for (kt_int32u xIndex = 0; xIndex < nX; xIndex++)
     {
-      xPoses.push_back(startX + xIndex * rSearchSpaceResolution.GetX());
+      m_xPoses.push_back(startX + xIndex * rSearchSpaceResolution.GetX());
     }
-    assert(math::DoubleEqual(xPoses.back(), -startX));
+    assert(math::DoubleEqual(m_xPoses.back(), -startX));
 
-    std::vector<kt_double> yPoses;
+    m_yPoses.clear();
     kt_int32u nY = static_cast<kt_int32u>(math::Round(rSearchSpaceOffset.GetY() *
                                           2.0 / rSearchSpaceResolution.GetY()) + 1);
     kt_double startY = -rSearchSpaceOffset.GetY();
     for (kt_int32u yIndex = 0; yIndex < nY; yIndex++)
     {
-      yPoses.push_back(startY + yIndex * rSearchSpaceResolution.GetY());
+      m_yPoses.push_back(startY + yIndex * rSearchSpaceResolution.GetY());
     }
-    assert(math::DoubleEqual(yPoses.back(), -startY));
+    assert(math::DoubleEqual(m_yPoses.back(), -startY));
 
     // calculate pose response array size
     kt_int32u nAngles = static_cast<kt_int32u>(math::Round(searchAngleOffset * 2.0 / searchAngleResolution) + 1);
 
-    kt_int32u poseResponseSize = static_cast<kt_int32u>(xPoses.size() * yPoses.size() * nAngles);
+    kt_int32u poseResponseSize = static_cast<kt_int32u>(m_xPoses.size() * m_yPoses.size() * nAngles);
 
     // allocate array
-    std::pair<kt_double, Pose2>* pPoseResponse = new std::pair<kt_double, Pose2>[poseResponseSize];
+    m_pPoseResponse = new std::pair<kt_double, Pose2>[poseResponseSize];
 
     Vector2<kt_int32s> startGridPoint = m_pCorrelationGrid->WorldToGrid(Vector2<kt_double>(rSearchCenter.GetX()
                                                                         + startX, rSearchCenter.GetY() + startY));
 
-    kt_int32u poseResponseCounter = 0;
-    forEachAs(std::vector<kt_double>, &yPoses, yIter)
-    {
-      kt_double y = *yIter;
-      kt_double newPositionY = rSearchCenter.GetY() + y;
-      kt_double squareY = math::Square(y);
-
-      forEachAs(std::vector<kt_double>, &xPoses, xIter)
-      {
-        kt_double x = *xIter;
-        kt_double newPositionX = rSearchCenter.GetX() + x;
-        kt_double squareX = math::Square(x);
-
-        Vector2<kt_int32s> gridPoint = m_pCorrelationGrid->WorldToGrid(Vector2<kt_double>(newPositionX, newPositionY));
-        kt_int32s gridIndex = m_pCorrelationGrid->GridIndex(gridPoint);
-        assert(gridIndex >= 0);
-
-        kt_double angle = 0.0;
-        kt_double startAngle = rSearchCenter.GetHeading() - searchAngleOffset;
-        for (kt_int32u angleIndex = 0; angleIndex < nAngles; angleIndex++)
-        {
-          angle = startAngle + angleIndex * searchAngleResolution;
-
-          kt_double response = GetResponse(angleIndex, gridIndex);
-          if (doPenalize && (math::DoubleEqual(response, 0.0) == false))
-          {
-            // simple model (approximate Gaussian) to take odometry into account
-
-            kt_double squaredDistance = squareX + squareY;
-            kt_double distancePenalty = 1.0 - (DISTANCE_PENALTY_GAIN *
-                                               squaredDistance / m_pMapper->m_pDistanceVariancePenalty->GetValue());
-            distancePenalty = math::Maximum(distancePenalty, m_pMapper->m_pMinimumDistancePenalty->GetValue());
-
-            kt_double squaredAngleDistance = math::Square(angle - rSearchCenter.GetHeading());
-            kt_double anglePenalty = 1.0 - (ANGLE_PENALTY_GAIN *
-                                            squaredAngleDistance / m_pMapper->m_pAngleVariancePenalty->GetValue());
-            anglePenalty = math::Maximum(anglePenalty, m_pMapper->m_pMinimumAnglePenalty->GetValue());
-
-            response *= (distancePenalty * anglePenalty);
-          }
-
-          // store response and pose
-          pPoseResponse[poseResponseCounter] = std::pair<kt_double, Pose2>(response, Pose2(newPositionX, newPositionY,
-                                                                           math::NormalizeAngle(angle)));
-          poseResponseCounter++;
-        }
-
-        //assert(math::DoubleEqual(angle, rSearchCenter.GetHeading() + searchAngleOffset));
-      }
-    }
-
-    assert(poseResponseSize == poseResponseCounter);
+    // this isn't good but its the fastest way to iterate. Should clean up later.
+    m_rSearchCenter = rSearchCenter;
+    m_searchAngleOffset = searchAngleOffset;
+    m_nAngles = nAngles;
+    m_searchAngleResolution = searchAngleResolution;
+    m_doPenalize = doPenalize;
+    tbb::parallel_do(m_yPoses, (*this) );
 
     // find value of best response (in [0; 1])
     kt_double bestResponse = -1;
     for (kt_int32u i = 0; i < poseResponseSize; i++)
     {
-      bestResponse = math::Maximum(bestResponse, pPoseResponse[i].first);
+      bestResponse = math::Maximum(bestResponse, m_pPoseResponse[i].first);
 
       // will compute positional covariance, save best relative probability for each cell
       if (!doingFineMatch)
       {
-        const Pose2& rPose = pPoseResponse[i].second;
+        const Pose2& rPose = m_pPoseResponse[i].second;
         Vector2<kt_int32s> grid = m_pSearchSpaceProbs->WorldToGrid(rPose.GetPosition());
+        kt_double* ptr;
 
-        // Changed (kt_double*) to the reinterpret_cast - Luc
-        kt_double* ptr = reinterpret_cast<kt_double*>(m_pSearchSpaceProbs->GetDataPointer(grid));
+        try
+        {
+          ptr = (kt_double*)(m_pSearchSpaceProbs->GetDataPointer(grid));
+        }
+        catch(...)
+        {
+          throw std::runtime_error("Mapper FATAL ERROR - unable to get pointer in probability search!");
+        }
+
         if (ptr == NULL)
         {
           throw std::runtime_error("Mapper FATAL ERROR - Index out of range in probability search!");
         }
 
-        *ptr = math::Maximum(pPoseResponse[i].first, *ptr);
+        *ptr = math::Maximum(m_pPoseResponse[i].first, *ptr);
       }
     }
 
@@ -633,11 +650,11 @@ namespace karto
     kt_int32s averagePoseCount = 0;
     for (kt_int32u i = 0; i < poseResponseSize; i++)
     {
-      if (math::DoubleEqual(pPoseResponse[i].first, bestResponse))
+      if (math::DoubleEqual(m_pPoseResponse[i].first, bestResponse))
       {
-        averagePosition += pPoseResponse[i].second.GetPosition();
+        averagePosition += m_pPoseResponse[i].second.GetPosition();
 
-        kt_double heading = pPoseResponse[i].second.GetHeading();
+        kt_double heading = m_pPoseResponse[i].second.GetHeading();
         thetaX += cos(heading);
         thetaY += sin(heading);
 
@@ -661,7 +678,7 @@ namespace karto
     }
 
     // delete pose response array
-    delete [] pPoseResponse;
+    delete [] m_pPoseResponse;
 
 #ifdef KARTO_DEBUG
     std::cout << "bestPose: " << averagePose << std::endl;
