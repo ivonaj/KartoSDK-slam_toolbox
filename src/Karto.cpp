@@ -31,6 +31,7 @@ BOOST_CLASS_EXPORT_IMPLEMENT(karto::SensorData);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::Name);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::LaserRangeScan);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::LocalizedRangeScan);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::CustomData);
 
 namespace karto
 {

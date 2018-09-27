@@ -5472,7 +5472,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Computes the robot pose given the corrected scan pose
      * @param rScanPose pose of the sensor
      */
-
     void SetSensorPose(const Pose2& rScanPose)
     {
       Pose2 deviceOffsetPose2 = GetLaserRangeFinder()->GetOffsetPose();
@@ -5550,12 +5549,10 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     {
       if (setFiltered)
       {
-        m_PointReadings.clear();
         m_PointReadings = points;
       }
       else
       {
-        m_UnfilteredPointReadings.clear();
         m_UnfilteredPointReadings = points;
       }
     }
@@ -6888,5 +6885,5 @@ BOOST_CLASS_EXPORT_KEY(karto::Name);
 BOOST_CLASS_EXPORT_KEY(karto::SensorData);
 BOOST_CLASS_EXPORT_KEY(karto::LocalizedRangeScan);
 BOOST_CLASS_EXPORT_KEY(karto::LaserRangeScan);
-
+BOOST_CLASS_EXPORT_KEY(karto::CustomData);
 #endif  // OPEN_KARTO_KARTO_H
