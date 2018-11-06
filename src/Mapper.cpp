@@ -28,7 +28,17 @@
 #include <boost/serialization/vector.hpp>
 
 #include "open_karto/Mapper.h"
-BOOST_CLASS_EXPORT(karto::MapperSensorManager)
+
+//BOOST_CLASS_EXPORT(karto::ScanMatcher);
+//BOOST_CLASS_EXPORT(karto::MapperSensorManager);
+//BOOST_CLASS_EXPORT(karto::ScanSolver);
+//BOOST_CLASS_EXPORT(karto::Mapper);
+//BOOST_CLASS_EXPORT(karto::MapperGraph);
+//BOOST_CLASS_EXPORT(karto::Graph<karto::LocalizedRangeScan>);
+//BOOST_CLASS_EXPORT(karto::GraphTraversal<karto::LocalizedRangeScan>);
+//BOOST_CLASS_EXPORT(karto::CorrelationGrid);
+//BOOST_CLASS_EXPORT(karto::Edge<karto::LocalizedRangeScan>);
+//BOOST_CLASS_EXPORT(karto::Vertex<karto::LocalizedRangeScan>);
 namespace karto
 {
 
@@ -1041,6 +1051,9 @@ namespace karto
     /**
      * Constructs a breadth-first traverser for the given graph
      */
+    BreadthFirstTraversal()
+    {
+    }
     BreadthFirstTraversal(Graph<T>* pGraph)
     : GraphTraversal<T>(pGraph)
     {
@@ -1102,6 +1115,12 @@ namespace karto
 
       return objects;
     }
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GraphTraversal<T>);
+    }
   };  // class BreadthFirstTraversal
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -1132,6 +1151,15 @@ namespace karto
     Pose2 m_CenterPose;
     kt_double m_MaxDistanceSquared;
     kt_bool m_UseScanBarycenter;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Visitor<LocalizedRangeScan>);
+      ar & BOOST_SERIALIZATION_NVP(m_CenterPose);
+      ar & BOOST_SERIALIZATION_NVP(m_MaxDistanceSquared);
+      ar & BOOST_SERIALIZATION_NVP(m_UseScanBarycenter);
+    }
   };  // NearScanVisitor
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -2214,7 +2242,9 @@ namespace karto
     printf("Save To File\n");
     std::ofstream ofs(filename.c_str());
     boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);
-    oa << BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
+//    oa.register_type<ScanMatcher>();
+    oa << BOOST_SERIALIZATION_NVP(*this);
+//    oa << BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
   }
 
   void Mapper::LoadFromFile(const std::string& filename) 
@@ -2222,7 +2252,8 @@ namespace karto
     printf("Load From File\n");
     std::ifstream ifs(filename.c_str());
     boost::archive::binary_iarchive ia(ifs, boost::archive::no_codecvt);
-    ia >> BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
+    ia >> BOOST_SERIALIZATION_NVP(*this);
+//    ia >> BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
   }
 
   void Mapper::Reset()
@@ -2480,3 +2511,4 @@ namespace karto
 	  return m_pGraph->GetLoopScanMatcher();
   }
 }  // namespace karto
+BOOST_CLASS_EXPORT(karto::BreadthFirstTraversal<karto::LocalizedRangeScan>)

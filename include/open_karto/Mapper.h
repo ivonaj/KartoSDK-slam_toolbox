@@ -40,8 +40,13 @@ namespace karto
      * Called with general message
      */
     virtual void Info(const std::string& /*rInfo*/) {};
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+    }
   };
-
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(MapperListener)
   /**
    * Abstract class to listen to mapper debug messages
    */
@@ -52,8 +57,13 @@ namespace karto
      * Called with debug message
      */
     virtual void Debug(const std::string& /*rInfo*/) {};
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+    }
   };
-
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(MapperDebugListener)
   /**
    * Abstract class to listen to mapper loop closure messages
    */
@@ -74,8 +84,13 @@ namespace karto
      * Called when loop closure is over
      */
     virtual void EndLoopClosure(const std::string& /*rInfo*/) {};
-  };  // MapperListener
-
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+    }
+  };  // MapperLoopClosureListener
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(MapperLoopClosureListener)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +112,11 @@ namespace karto
      * Destructor
      */
     virtual ~EdgeLabel()
+    {
+    }
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
     {
     }
   };  // EdgeLabel
@@ -193,6 +213,17 @@ namespace karto
     Pose2 m_Pose2;
     Pose2 m_PoseDifference;
     Matrix3 m_Covariance;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EdgeLabel);
+      ar & BOOST_SERIALIZATION_NVP(m_Pose1);
+      ar & BOOST_SERIALIZATION_NVP(m_Pose2);
+      ar & BOOST_SERIALIZATION_NVP(m_PoseDifference);
+      ar & BOOST_SERIALIZATION_NVP(m_Covariance);
+    }
   };  // LinkInfo
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +246,9 @@ namespace karto
      * Constructs a vertex representing the given object
      * @param pObject
      */
+    Vertex()
+    {
+    }
     Vertex(T* pObject)
       : m_pObject(pObject)
     {
@@ -284,6 +318,14 @@ namespace karto
 
     T* m_pObject;
     std::vector<Edge<T>*> m_Edges;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_pObject);
+      ar & BOOST_SERIALIZATION_NVP(m_Edges);
+    }
   };  // Vertex<T>
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -302,6 +344,9 @@ namespace karto
      * @param pSource
      * @param pTarget
      */
+    Edge()
+    {
+    }
     Edge(Vertex<T>* pSource, Vertex<T>* pTarget)
       : m_pSource(pSource)
       , m_pTarget(pTarget)
@@ -367,6 +412,15 @@ namespace karto
     Vertex<T>* m_pSource;
     Vertex<T>* m_pTarget;
     EdgeLabel* m_pLabel;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_pSource);
+      ar & BOOST_SERIALIZATION_NVP(m_pTarget);
+      ar & BOOST_SERIALIZATION_NVP(m_pLabel);
+    }
   };  // class Edge<T>
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -386,8 +440,13 @@ namespace karto
      * @return true if the visitor accepted the vertex, false otherwise
      */
     virtual kt_bool Visit(Vertex<T>* pVertex) = 0;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+    }
   };  // Visitor<T>
-
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Visitor<LocalizedRangeScan>)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +465,9 @@ namespace karto
      * Constructs a traverser for the given graph
      * @param pGraph
      */
+    GraphTraversal()
+    {
+    }
     GraphTraversal(Graph<T>* pGraph)
       : m_pGraph(pGraph)
     {
@@ -431,7 +493,15 @@ namespace karto
      * Graph being traversed
      */
     Graph<T>* m_pGraph;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_pGraph);
+    }
   };  // GraphTraversal<T>
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(GraphTraversal<LocalizedRangeScan>)
 
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -535,6 +605,16 @@ namespace karto
      * Edges of this graph
      */
     std::vector<Edge<T>*> m_Edges;
+    /**
+     * Serialization: class Graph
+     */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Vertices);
+      ar & BOOST_SERIALIZATION_NVP(m_Edges);
+    }
   };  // Graph<T>
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -556,7 +636,9 @@ namespace karto
      * @param rangeThreshold
      */
     MapperGraph(Mapper* pMapper, kt_double rangeThreshold);
-
+    MapperGraph()
+    {
+    }
     /**
      * Destructor
      */
@@ -708,6 +790,23 @@ namespace karto
      * Traversal algorithm to find near linked scans
      */
     GraphTraversal<LocalizedRangeScan>* m_pTraversal;
+
+    /**
+     * Serialization: class MapperGraph
+     */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      std::cout<<"base obj LocalizedRangeScan";
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Graph<LocalizedRangeScan>);
+      ar & BOOST_SERIALIZATION_NVP(m_pMapper);
+      std::cout<<" m_LoopScanMatcher ";
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopScanMatcher);
+      std::cout<<" m_pTraversal ";
+      ar & BOOST_SERIALIZATION_NVP(m_pTraversal);
+    }
+
   };  // MapperGraph
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -803,8 +902,14 @@ namespace karto
     {
       std::cout << "GetNodeOrientation method not implemented for this solver type." << std::endl;
     };
-  };  // ScanSolver
 
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+    }
+  };  // ScanSolver
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(ScanSolver)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -832,6 +937,9 @@ namespace karto
      * @param smearDeviation
      * @return correlation grid
      */
+    CorrelationGrid()
+    {
+    }
     static CorrelationGrid* CreateGrid(kt_int32s width,
                                        kt_int32s height,
                                        kt_double resolution,
@@ -1032,8 +1140,31 @@ namespace karto
 
     // region of interest
     Rectangle2<kt_int32s> m_Roi;
-  };  // CorrelationGrid
+    /**
+     * Serialization: class CorrelationGrid
+     */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Grid<kt_int8u>);
+      std::cout<<"base obj Grid";
+      ar & BOOST_SERIALIZATION_NVP(m_SmearDeviation);
+      std::cout<<"m_SMear";
+      ar & BOOST_SERIALIZATION_NVP(m_KernelSize);
+      std::cout<<"kernalsize";
+      if (Archive::is_loading::value)
+      {
+        m_pKernel = new kt_int8u[m_KernelSize * m_KernelSize];
+      }
+      ar & boost::serialization::make_array<kt_int8u>(m_pKernel, m_KernelSize * m_KernelSize);
+      std::cout<<"m_Kernel";
+      ar & BOOST_SERIALIZATION_NVP(m_Roi);
+      std::cout<<" m_ROi";
 
+    }
+  };  // CorrelationGrid
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(CorrelationGrid)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -1044,6 +1175,9 @@ namespace karto
   class KARTO_EXPORT ScanMatcher
   {
   public:
+    ScanMatcher()
+    {
+    }
     /**
      * Destructor
      */
@@ -1196,6 +1330,20 @@ namespace karto
     Grid<kt_double>* m_pSearchSpaceProbs;
 
     GridIndexLookup<kt_int8u>* m_pGridLookup;
+    /**
+     * Serialization: class ScanMatcher
+     */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      std::cout<<"ScanMatcher";
+      ar & BOOST_SERIALIZATION_NVP(m_pMapper);
+      ar & BOOST_SERIALIZATION_NVP(m_pCorrelationGrid);
+      ar & BOOST_SERIALIZATION_NVP(m_pSearchSpaceProbs);
+      ar & BOOST_SERIALIZATION_NVP(m_pGridLookup);
+
+    }
   };  // ScanMatcher
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -1524,7 +1672,7 @@ namespace karto
    *
    *  \a LoopMatchMaximumVarianceCoarse (ParameterDouble)\n
    *     The co-variance values for a possible loop closure have to be less than this value
-   *     to consider a viable solution. This applies to the coarse search.
+   *     to consider a viable solution. This applies to the coarse search.https://mail.google.com/mail/u/1/
    *     Default value is 0.16.
    *
    *  \a LoopMatchMinimumResponseCoarse (ParameterDouble - probability (>= 0.0, <= 1.0))\n
@@ -1932,6 +2080,47 @@ namespace karto
     // whether to increase the search space if no good matches are initially found
     Parameter<kt_bool>* m_pUseResponseExpansion;
 
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Module);
+      ar & BOOST_SERIALIZATION_NVP(m_Initialized);
+      ar & BOOST_SERIALIZATION_NVP(m_pSequentialScanMatcher);
+      ar & BOOST_SERIALIZATION_NVP(m_pGraph);
+      ar & BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
+//      ar & BOOST_SERIALIZATION_NVP(m_pScanOptimizer);
+      ar & BOOST_SERIALIZATION_NVP(m_Listeners);
+      ar & BOOST_SERIALIZATION_NVP(m_pUseScanMatching);
+      ar & BOOST_SERIALIZATION_NVP(m_pUseScanBarycenter);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumTimeInterval);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumTravelDistance);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumTravelHeading);
+      ar & BOOST_SERIALIZATION_NVP(m_pScanBufferSize);
+      ar & BOOST_SERIALIZATION_NVP(m_pScanBufferMaximumScanDistance);
+      ar & BOOST_SERIALIZATION_NVP(m_pLinkMatchMinimumResponseFine);
+      ar & BOOST_SERIALIZATION_NVP(m_pLinkScanMaximumDistance);
+      ar & BOOST_SERIALIZATION_NVP(m_pDoLoopClosing);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopSearchMaximumDistance);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopMatchMinimumChainSize);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopMatchMaximumVarianceCoarse);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopMatchMinimumResponseCoarse);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopMatchMinimumResponseFine);
+      ar & BOOST_SERIALIZATION_NVP(m_pCorrelationSearchSpaceDimension);
+      ar & BOOST_SERIALIZATION_NVP(m_pCorrelationSearchSpaceResolution);
+      ar & BOOST_SERIALIZATION_NVP(m_pCorrelationSearchSpaceSmearDeviation);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopSearchSpaceDimension);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopSearchSpaceResolution);
+      ar & BOOST_SERIALIZATION_NVP(m_pLoopSearchSpaceSmearDeviation);
+      ar & BOOST_SERIALIZATION_NVP(m_pDistanceVariancePenalty);
+      ar & BOOST_SERIALIZATION_NVP(m_pAngleVariancePenalty);
+      ar & BOOST_SERIALIZATION_NVP(m_pFineSearchAngleOffset);
+      ar & BOOST_SERIALIZATION_NVP(m_pCoarseSearchAngleOffset);
+      ar & BOOST_SERIALIZATION_NVP(m_pCoarseAngleResolution);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumAnglePenalty);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumDistancePenalty);
+      ar & BOOST_SERIALIZATION_NVP(m_pUseResponseExpansion);
+    }
   public:
     /* Abstract methods for parameter setters and getters */
 
@@ -2011,6 +2200,15 @@ namespace karto
     void setParamMinimumDistancePenalty(double d);
     void setParamUseResponseExpansion(bool b);
   };
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Mapper)
 }  // namespace karto
 
 #endif  // OPEN_KARTO_MAPPER_H
+//BOOST_CLASS_EXPORT_KEY(karto::MapperGraph);
+//BOOST_CLASS_EXPORT_KEY(karto::ScanMatcher);
+//BOOST_CLASS_EXPORT(karto::Graph<karto::LocalizedRangeScan>);
+//BOOST_CLASS_EXPORT_KEY(karto::CorrelationGrid);
+//BOOST_CLASS_EXPORT(karto::Edge<karto::LocalizedRangeScan>);
+//BOOST_CLASS_EXPORT(karto::Vertex<karto::LocalizedRangeScan>);
+//BOOST_CLASS_EXPORT(karto::EdgeLabel);
+//BOOST_CLASS_EXPORT_KEY(karto::Mapper);

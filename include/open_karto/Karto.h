@@ -49,6 +49,7 @@
 #include <boost/serialization/array.hpp>
 #include <boost/version.hpp>
 
+
 #ifdef USE_POCO
 #include <Poco/Mutex.h>
 #endif
@@ -441,17 +442,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     {
     }
 
-    /**
-     * Serialization: class Name 
-     */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(m_Name);
-		ar & BOOST_SERIALIZATION_NVP(m_Scope);
-	}
-
   public:
     /**
      * Gets the name of this name
@@ -645,6 +635,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     std::string m_Name;
     std::string m_Scope;
+    /**
+     * Serialization: class Name
+     */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Name);
+      ar & BOOST_SERIALIZATION_NVP(m_Scope);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -731,17 +731,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       return m_pParameterManager->GetParameterVector();
     }
 
-    /**
-     * Serialization: class Object 
-     */
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
-      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
-      ar & BOOST_SERIALIZATION_NVP(m_Name);
-    }
-
   private:
     Object(const Object&);
     const Object& operator=(const Object&);
@@ -749,8 +738,18 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     Name m_Name;
     ParameterManager* m_pParameterManager;
+    /**
+ * Serialization: class Object
+ */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+//      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+//      ar & BOOST_SERIALIZATION_NVP(m_Name);
+    }
   };
-
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractParameter)
 
   /**
    * Type declaration of Object vector
@@ -874,7 +873,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     Module(const Module&);
     const Module& operator=(const Module&);
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
+    }
   };
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Module)
 
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -995,6 +1002,13 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     T m_Width;
     T m_Height;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Width);
+      ar & BOOST_SERIALIZATION_NVP(m_Height);
+    }
   };  // Size2<T>
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -2030,6 +2044,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     Vector2<T> m_Position;
     Size2<T> m_Size;
+    /**
+     * Serialization: class Rectangle2
+     */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Position);
+      ar & BOOST_SERIALIZATION_NVP(m_Size);
+    }
   };  // Rectangle2
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -2711,6 +2735,12 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
   private:
     kt_double m_Matrix[3][3];
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Matrix);
+    }
   };  // Matrix3
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -3055,6 +3085,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
     Matrix3 m_Rotation;
     Matrix3 m_InverseRotation;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Transform);
+      ar & BOOST_SERIALIZATION_NVP(m_Rotation);
+      ar & BOOST_SERIALIZATION_NVP(m_InverseRotation);
+    }
   };  // Transform
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -3098,6 +3137,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 	}
 
   public:
+    AbstractParameter()
+    {
+    }
     /**
      * Constructs a parameter with the given name
      * @param rName
@@ -3195,6 +3237,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     std::string m_Name;
     std::string m_Description;
   };  // AbstractParameter
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractParameter)
 
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -3213,6 +3256,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * @param value
      * @param pParameterManger
      */
+    Parameter()
+    {
+    }
     Parameter(const std::string& rName, T value, ParameterManager* pParameterManger = NULL)
       : AbstractParameter(rName, pParameterManger)
       , m_Value(value)
@@ -3320,7 +3366,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbstractParameter); 
+		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbstractParameter);
 		ar & BOOST_SERIALIZATION_NVP(m_Value);
 	}
 
@@ -3330,6 +3376,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      */
     T m_Value;
   };  // Parameter
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Parameter)
 
   template<>
   inline void Parameter<kt_double>::SetValueFromString(const std::string& rStringValue)
@@ -3505,8 +3552,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
   private:
     EnumMap m_EnumDefines;
-  };  // ParameterEnum
 
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Parameter<kt_int32s>);
+      ar & BOOST_SERIALIZATION_NVP(m_EnumDefines);
+    }
+  };  // ParameterEnum
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(ParameterEnum)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -3538,9 +3593,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     {
     }
 
-	template<class Archive>
+  friend class boost::serialization::access;
+  template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
 	}
 
   private:
@@ -3638,7 +3695,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      */
     Parameter<Pose2>* m_pOffsetPose;
   };  // Sensor
-
   /**
    * Type declaration of Sensor vector
    */
@@ -3816,7 +3872,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       : Sensor(rName)
     {
     }
-
     /**
      * Destructor
      */
@@ -3843,8 +3898,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     Drive(const Drive&);
     const Drive& operator=(const Drive&);
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Sensor);
+    }
   };  // class Drive
 
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Drive)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -4496,6 +4558,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     kt_double m_Scale;
 
     Vector2<kt_double> m_Offset;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Size);
+      ar & BOOST_SERIALIZATION_NVP(m_Scale);
+      ar & BOOST_SERIALIZATION_NVP(m_Offset);
+    }
+
   };  // CoordinateConverter
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -4516,6 +4587,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * @param resolution
      * @return grid pointer
      */
+    Grid()
+    {
+    }
     static Grid* CreateGrid(kt_int32s width, kt_int32s height, kt_double resolution)
     {
       Grid* pGrid = new Grid(width, height);
@@ -4892,7 +4966,25 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
     // coordinate converter to convert between world coordinates and grid coordinates
     CoordinateConverter* m_pCoordinateConverter;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Width);
+      ar & BOOST_SERIALIZATION_NVP(m_Height);
+      ar & BOOST_SERIALIZATION_NVP(m_WidthStep);
+      ar & BOOST_SERIALIZATION_NVP(m_pCoordinateConverter);
+
+
+      if (Archive::is_loading::value)
+      {
+        m_pData = new T[m_WidthStep * m_Height];
+      }
+      ar & boost::serialization::make_array<T>(m_pData, m_WidthStep * m_Height);
+    }
+
   };  // Grid
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Grid)
 
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -4948,6 +5040,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
   }
   };
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(CustomData)
 
   /**
    * Type declaration of CustomData vector
@@ -6320,15 +6413,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     /**
      * Serialization: class DatasetInfo 
      */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(*m_pTitle);
-		ar & BOOST_SERIALIZATION_NVP(*m_pAuthor);
-		ar & BOOST_SERIALIZATION_NVP(*m_pDescription);
-		ar & BOOST_SERIALIZATION_NVP(*m_pCopyright);
-	}
 
   private:
     DatasetInfo(const DatasetInfo&);
@@ -6339,6 +6423,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     Parameter<std::string>* m_pAuthor;
     Parameter<std::string>* m_pDescription;
     Parameter<std::string>* m_pCopyright;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(*m_pTitle);
+      ar & BOOST_SERIALIZATION_NVP(*m_pAuthor);
+      ar & BOOST_SERIALIZATION_NVP(*m_pDescription);
+      ar & BOOST_SERIALIZATION_NVP(*m_pCopyright);
+    }
   };  // class DatasetInfo
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -6447,13 +6540,18 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       }
     }
 
+
+  private:
+	std::map<Name, Sensor*> m_SensorNameLookup;
+	ObjectVector m_Objects;
+	DatasetInfo* m_pDatasetInfo;
     /**
-     * Serialization: class Dataset 
+     * Serialization: class Dataset
      */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
 		int idx = 0;
 		for (std::map<Name,Sensor*>::iterator it=m_SensorNameLookup.begin(); it!=m_SensorNameLookup.end(); ++it)
 		{
@@ -6469,23 +6567,20 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
 			idx++;
 		}
+//		for(size_t i = 0; i < m_Objects.size(); ++i)
+//		{
+//			std::stringstream ss;
+//			ss << "m_Objects_" << i;
+//			std::string tag_mObjects = ss.str();
+//			ar & boost::serialization::make_nvp(tag_mObjects.c_str(), *m_Objects[i]);
+//		}
+//      ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
+//      ar & BOOST_SERIALIZATION_NVP(m_Objects);
+      ar & BOOST_SERIALIZATION_NVP(m_pDatasetInfo);
+    }
 
-		for(size_t i = 0; i < m_Objects.size(); ++i)
-		{
-			std::stringstream ss;
-			ss << "m_Objects_" << i;
-			std::string tag_mObjects = ss.str();
-			ar & boost::serialization::make_nvp(tag_mObjects.c_str(), *m_Objects[i]);
-		}
-		ar & BOOST_SERIALIZATION_NVP(m_pDatasetInfo);
-	}
-
-  private:
-	std::map<Name, Sensor*> m_SensorNameLookup;
-	ObjectVector m_Objects;
-	DatasetInfo* m_pDatasetInfo;
   };  // Dataset
-
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Dataset)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -6603,6 +6698,18 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 		  kt_int32s* m_pArray;
 		  kt_int32u m_Capacity;
 		  kt_int32u m_Size;
+      friend class boost::serialization::access;
+      template<class Archive>
+      void serialize(Archive &ar, const unsigned int version)
+      {
+        if (Archive::is_loading::value)
+        {
+          m_pArray = new kt_int32s[m_Capacity];
+        }
+        ar & boost::serialization::make_array<kt_int32s >(m_pArray, m_Capacity);
+        ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+        ar & BOOST_SERIALIZATION_NVP(m_Size);
+      }
   };  // LookupArray
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -6630,6 +6737,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 			   * Construct a GridIndexLookup with a grid
 			   * @param pGrid
 			   */
+       GridIndexLookup() = default;
 			  GridIndexLookup(Grid<T>* pGrid)
 				  : m_pGrid(pGrid)
 					, m_Capacity(0)
@@ -6822,6 +6930,25 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
 			  // for sanity check
 			  std::vector<kt_double> m_Angles;
+      friend class boost::serialization::access;
+      template<class Archive>
+      void serialize(Archive &ar, const unsigned int version)
+      {
+        ar & BOOST_SERIALIZATION_NVP(m_pGrid);
+        ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+        ar & BOOST_SERIALIZATION_NVP(m_Size);
+        ar & BOOST_SERIALIZATION_NVP(m_Angles);
+
+        if (Archive::is_loading::value)
+        {
+          m_ppLookupArray = new LookupArray*[m_Capacity];
+          for (kt_int32u i = 0; i < m_Capacity; i++)
+          {
+            m_ppLookupArray[i] = new LookupArray();
+          }
+        }
+        ar & boost::serialization::make_array<LookupArray*>(m_ppLookupArray, m_Capacity);
+      }
 	  };  // class GridIndexLookup
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -6886,4 +7013,14 @@ BOOST_CLASS_EXPORT_KEY(karto::SensorData);
 BOOST_CLASS_EXPORT_KEY(karto::LocalizedRangeScan);
 BOOST_CLASS_EXPORT_KEY(karto::LaserRangeScan);
 BOOST_CLASS_EXPORT_KEY(karto::CustomData);
+BOOST_CLASS_EXPORT_KEY(karto::Module);
+BOOST_CLASS_EXPORT_KEY(karto::Rectangle2<kt_double>);
+BOOST_CLASS_EXPORT_KEY(karto::CoordinateConverter);
+//BOOST_CLASS_EXPORT_KEY(karto::Grid<kt_double>);
+//BOOST_CLASS_EXPORT(karto::Grid<kt_int32s>)
+BOOST_CLASS_EXPORT_KEY(karto::Size2<kt_double>);
+//BOOST_CLASS_EXPORT(karto::Size2<kt_int32s>);
+BOOST_CLASS_EXPORT_KEY(karto::GridIndexLookup<kt_int8u>);
+//BOOST_CLASS_EXPORT(karto::LookupArray);
+//BOOST_CLASS_EXPORT_KEY(karto::Parameter);
 #endif  // OPEN_KARTO_KARTO_H
