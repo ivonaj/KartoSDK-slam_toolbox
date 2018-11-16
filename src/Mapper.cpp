@@ -33,12 +33,14 @@
 //BOOST_CLASS_EXPORT(karto::MapperSensorManager);
 //BOOST_CLASS_EXPORT(karto::ScanSolver);
 //BOOST_CLASS_EXPORT(karto::Mapper);
-//BOOST_CLASS_EXPORT(karto::MapperGraph);
-//BOOST_CLASS_EXPORT(karto::Graph<karto::LocalizedRangeScan>);
+BOOST_CLASS_EXPORT(karto::MapperGraph);
+BOOST_CLASS_EXPORT(karto::Graph<karto::LocalizedRangeScan>);
+BOOST_CLASS_EXPORT(karto::EdgeLabel);
+BOOST_CLASS_EXPORT(karto::LinkInfo);
 //BOOST_CLASS_EXPORT(karto::GraphTraversal<karto::LocalizedRangeScan>);
 //BOOST_CLASS_EXPORT(karto::CorrelationGrid);
-//BOOST_CLASS_EXPORT(karto::Edge<karto::LocalizedRangeScan>);
-//BOOST_CLASS_EXPORT(karto::Vertex<karto::LocalizedRangeScan>);
+BOOST_CLASS_EXPORT(karto::Edge<karto::LocalizedRangeScan>);
+BOOST_CLASS_EXPORT(karto::Vertex<karto::LocalizedRangeScan>);
 namespace karto
 {
 
@@ -322,9 +324,19 @@ namespace karto
 
   ScanMatcher::~ScanMatcher()
   {
-    delete m_pCorrelationGrid;
-    delete m_pSearchSpaceProbs;
-    delete m_pGridLookup;
+    if (m_pCorrelationGrid)
+    {
+      delete m_pCorrelationGrid;
+    }
+    if (m_pSearchSpaceProbs)
+    {
+      delete m_pSearchSpaceProbs;
+    }
+    if (m_pGridLookup)
+    {
+      delete m_pGridLookup;
+    }
+
   }
 
   ScanMatcher* ScanMatcher::Create(Mapper* pMapper, kt_double searchSize, kt_double resolution,
@@ -1179,11 +1191,16 @@ namespace karto
 
   MapperGraph::~MapperGraph()
   {
-    delete m_pLoopScanMatcher;
-    m_pLoopScanMatcher = NULL;
-
-    delete m_pTraversal;
-    m_pTraversal = NULL;
+    if (m_pLoopScanMatcher)
+    {
+      delete m_pLoopScanMatcher;
+      m_pLoopScanMatcher = NULL;
+    }
+    if (m_pTraversal)
+    {
+      delete m_pTraversal;
+      m_pTraversal = NULL;
+    }
   }
 
   void MapperGraph::AddVertex(LocalizedRangeScan* pScan)
@@ -2258,15 +2275,21 @@ namespace karto
 
   void Mapper::Reset()
   {
-	  delete m_pSequentialScanMatcher;
-	  m_pSequentialScanMatcher = NULL;
-
-	  delete m_pGraph;
-	  m_pGraph = NULL;
-
-	  delete m_pMapperSensorManager;
-	  m_pMapperSensorManager = NULL;
-
+    if (m_pSequentialScanMatcher)
+    {
+      delete m_pSequentialScanMatcher;
+      m_pSequentialScanMatcher = NULL;
+    }
+    if (m_pGraph)
+    {
+      delete m_pGraph;
+      m_pGraph = NULL;
+    }
+    if (m_pMapperSensorManager)
+    {
+      delete m_pMapperSensorManager;
+      m_pMapperSensorManager = NULL;
+    }
 	  m_Initialized = false;
   }
 

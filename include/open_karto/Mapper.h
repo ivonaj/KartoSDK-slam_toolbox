@@ -137,6 +137,9 @@ namespace karto
      * @param rPose2
      * @param rCovariance
      */
+    LinkInfo()
+    {
+    }
     LinkInfo(const Pose2& rPose1, const Pose2& rPose2, const Matrix3& rCovariance)
     {
       Update(rPose1, rPose2, rCovariance);
@@ -323,7 +326,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<" Vertex::m_pObject ";
       ar & BOOST_SERIALIZATION_NVP(m_pObject);
+      std::cout<<" Vertex::m_edges ";
       ar & BOOST_SERIALIZATION_NVP(m_Edges);
     }
   };  // Vertex<T>
@@ -417,8 +422,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<" Edge::m_pSource ";
       ar & BOOST_SERIALIZATION_NVP(m_pSource);
+      std::cout<<" Edge::m_pTarget ";
       ar & BOOST_SERIALIZATION_NVP(m_pTarget);
+      std::cout<<" Edge::m_pLabel ";
       ar & BOOST_SERIALIZATION_NVP(m_pLabel);
     }
   };  // class Edge<T>
@@ -612,8 +620,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-      ar & BOOST_SERIALIZATION_NVP(m_Vertices);
+      std::cout<<" Grap::m_Edges ";
       ar & BOOST_SERIALIZATION_NVP(m_Edges);
+      std::cout<<" Graph::m_vertices ";
+      ar & BOOST_SERIALIZATION_NVP(m_Vertices);
+
     }
   };  // Graph<T>
 
@@ -801,7 +812,7 @@ namespace karto
       std::cout<<"base obj LocalizedRangeScan";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Graph<LocalizedRangeScan>);
       ar & BOOST_SERIALIZATION_NVP(m_pMapper);
-      std::cout<<" m_LoopScanMatcher ";
+//      std::cout<<" m_LoopScanMatcher ";
       ar & BOOST_SERIALIZATION_NVP(m_pLoopScanMatcher);
       std::cout<<" m_pTraversal ";
       ar & BOOST_SERIALIZATION_NVP(m_pTraversal);
@@ -925,7 +936,11 @@ namespace karto
      */
     virtual ~CorrelationGrid()
     {
-      delete [] m_pKernel;
+      if (m_pKernel)
+      {
+        delete [] m_pKernel;
+      }
+
     }
 
   public:
@@ -1157,11 +1172,10 @@ namespace karto
       {
         m_pKernel = new kt_int8u[m_KernelSize * m_KernelSize];
       }
-      ar & boost::serialization::make_array<kt_int8u>(m_pKernel, m_KernelSize * m_KernelSize);
       std::cout<<"m_Kernel";
-      ar & BOOST_SERIALIZATION_NVP(m_Roi);
+      ar & boost::serialization::make_array<kt_int8u>(m_pKernel, m_KernelSize * m_KernelSize);
       std::cout<<" m_ROi";
-
+      ar & BOOST_SERIALIZATION_NVP(m_Roi);
     }
   };  // CorrelationGrid
   BOOST_SERIALIZATION_ASSUME_ABSTRACT(CorrelationGrid)
@@ -1672,7 +1686,7 @@ namespace karto
    *
    *  \a LoopMatchMaximumVarianceCoarse (ParameterDouble)\n
    *     The co-variance values for a possible loop closure have to be less than this value
-   *     to consider a viable solution. This applies to the coarse search.https://mail.google.com/mail/u/1/
+   *     to consider a viable solution. This applies to the coarse search.
    *     Default value is 0.16.
    *
    *  \a LoopMatchMinimumResponseCoarse (ParameterDouble - probability (>= 0.0, <= 1.0))\n
@@ -2086,7 +2100,7 @@ namespace karto
     {
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Module);
       ar & BOOST_SERIALIZATION_NVP(m_Initialized);
-      ar & BOOST_SERIALIZATION_NVP(m_pSequentialScanMatcher);
+//      ar & BOOST_SERIALIZATION_NVP(m_pSequentialScanMatcher);
       ar & BOOST_SERIALIZATION_NVP(m_pGraph);
       ar & BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
 //      ar & BOOST_SERIALIZATION_NVP(m_pScanOptimizer);
@@ -2120,6 +2134,7 @@ namespace karto
       ar & BOOST_SERIALIZATION_NVP(m_pMinimumAnglePenalty);
       ar & BOOST_SERIALIZATION_NVP(m_pMinimumDistancePenalty);
       ar & BOOST_SERIALIZATION_NVP(m_pUseResponseExpansion);
+      std::cout<<"###ALL SERIALIZED###\n";
     }
   public:
     /* Abstract methods for parameter setters and getters */

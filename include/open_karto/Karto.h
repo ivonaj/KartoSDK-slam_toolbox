@@ -745,11 +745,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-//      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
-//      ar & BOOST_SERIALIZATION_NVP(m_Name);
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+      ar & BOOST_SERIALIZATION_NVP(m_Name);
     }
   };
-  BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractParameter)
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Object)
 
   /**
    * Type declaration of Object vector
@@ -4604,8 +4604,14 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      */
     virtual ~Grid()
     {
-      delete [] m_pData;
-      delete m_pCoordinateConverter;
+      if (m_pData)
+      {
+        delete [] m_pData;
+      }
+      if (m_pCoordinateConverter)
+      {
+        delete m_pCoordinateConverter;
+      }
     }
 
   public:
@@ -6540,7 +6546,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       }
     }
 
-
   private:
 	std::map<Name, Sensor*> m_SensorNameLookup;
 	ObjectVector m_Objects;
@@ -6553,20 +6558,20 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     void serialize(Archive &ar, const unsigned int version)
     {
 		int idx = 0;
-		for (std::map<Name,Sensor*>::iterator it=m_SensorNameLookup.begin(); it!=m_SensorNameLookup.end(); ++it)
-		{
-			std::cout << it->first << " => " << it->second << '\n';
-
-			std::stringstream ss1;
-			std::stringstream ss2;
-			ss1 << "m_SensorNameLookup_" << idx << "_Name";
-			ss2 << "m_SensorNameLookup_" << idx << "_Sensor";
-			std::string tag1 = ss1.str();
-			std::string tag2 = ss2.str();
-			ar & boost::serialization::make_nvp(tag1.c_str(), it->first);
-			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
-			idx++;
-		}
+//		for (std::map<Name,Sensor*>::iterator it=m_SensorNameLookup.begin(); it!=m_SensorNameLookup.end(); ++it)
+//		{
+//			std::cout << it->first << " => " << it->second << '\n';
+//
+//			std::stringstream ss1;
+//			std::stringstream ss2;
+//			ss1 << "m_SensorNameLookup_" << idx << "_Name";
+//			ss2 << "m_SensorNameLookup_" << idx << "_Sensor";
+//			std::string tag1 = ss1.str();
+//			std::string tag2 = ss2.str();
+//			ar & boost::serialization::make_nvp(tag1.c_str(), it->first);
+//			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
+//			idx++;
+//		}
 //		for(size_t i = 0; i < m_Objects.size(); ++i)
 //		{
 //			std::stringstream ss;
@@ -6911,13 +6916,18 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 			   */
 			  void DestroyArrays()
 			  {
-				  for (kt_int32u i = 0; i < m_Capacity; i++)
-				  {
-					  delete m_ppLookupArray[i];
-				  }
-
-				  delete[] m_ppLookupArray;
-				  m_ppLookupArray = NULL;
+			    if (m_ppLookupArray)
+          {
+            for (kt_int32u i = 0; i < m_Capacity; i++)
+            {
+              delete m_ppLookupArray[i];
+            }
+          }
+				  if (m_ppLookupArray)
+          {
+            delete[] m_ppLookupArray;
+            m_ppLookupArray = NULL;
+          }
 			  }
 
 		  private:
