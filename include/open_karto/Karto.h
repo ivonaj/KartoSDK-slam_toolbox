@@ -3446,6 +3446,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       : Parameter<kt_int32s>(rName, value, pParameterManger)
     {
     }
+    ParameterEnum()
+    {
+    }
 
     /**
      * Destructor
@@ -3629,6 +3632,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 	}
 
   public:
+    Sensor()
+    {
+    }
     // @cond EXCLUDE
     KARTO_Object(Sensor)
     // @endcond
@@ -3695,6 +3701,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      */
     Parameter<Pose2>* m_pOffsetPose;
   };  // Sensor
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(Sensor)
   /**
    * Type declaration of Sensor vector
    */
@@ -3929,6 +3936,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   class KARTO_EXPORT LaserRangeFinder : public Sensor
   {
   public:
+    LaserRangeFinder()
+    {
+    }
     // @cond EXCLUDE
     KARTO_Object(LaserRangeFinder)
     // @endcond
@@ -4370,8 +4380,39 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     kt_int32u m_NumberOfRangeReadings;
 
     // static std::string LaserRangeFinderTypeNames[6];
-  };  // LaserRangeFinder
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      if (Archive::is_loading::value)
+      {
+        m_pMinimumRange = new Parameter<kt_double>("MinimumRange", 0.0, GetParameterManager());
+        m_pMaximumRange = new Parameter<kt_double>("MaximumRange", 80.0, GetParameterManager());
 
+        m_pMinimumAngle = new Parameter<kt_double>("MinimumAngle", -KT_PI_2, GetParameterManager());
+        m_pMaximumAngle = new Parameter<kt_double>("MaximumAngle", KT_PI_2, GetParameterManager());
+
+        m_pAngularResolution = new Parameter<kt_double>("AngularResolution",
+                                                        math::DegreesToRadians(1),
+                                                        GetParameterManager());
+
+        m_pRangeThreshold = new Parameter<kt_double>("RangeThreshold", 12.0, GetParameterManager());
+
+        m_pType = new ParameterEnum("Type", LaserRangeFinder_Custom, GetParameterManager());
+      }
+
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Sensor);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumAngle);
+      ar & BOOST_SERIALIZATION_NVP(m_pMaximumAngle);
+      ar & BOOST_SERIALIZATION_NVP(m_pAngularResolution);
+      ar & BOOST_SERIALIZATION_NVP(m_pMinimumRange);
+      ar & BOOST_SERIALIZATION_NVP(m_pMaximumRange);
+      ar & BOOST_SERIALIZATION_NVP(m_pRangeThreshold);
+      ar & BOOST_SERIALIZATION_NVP(m_pType);
+      ar & BOOST_SERIALIZATION_NVP(m_NumberOfRangeReadings);
+    }
+  };  // LaserRangeFinder
+  BOOST_SERIALIZATION_ASSUME_ABSTRACT(LaserRangeFinder)
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -6557,7 +6598,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-		int idx = 0;
+//		int idx = 0;
 //		for (std::map<Name,Sensor*>::iterator it=m_SensorNameLookup.begin(); it!=m_SensorNameLookup.end(); ++it)
 //		{
 //			std::cout << it->first << " => " << it->second << '\n';
@@ -6579,8 +6620,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 //			std::string tag_mObjects = ss.str();
 //			ar & boost::serialization::make_nvp(tag_mObjects.c_str(), *m_Objects[i]);
 //		}
-//      ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
-//      ar & BOOST_SERIALIZATION_NVP(m_Objects);
+      std::cout<<"m_SensorNameLookup";
+      ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
+      std::cout<<"m_Objects";
+      ar & BOOST_SERIALIZATION_NVP(m_Objects);
+      std::cout<<"m_pDatasetInfo";
       ar & BOOST_SERIALIZATION_NVP(m_pDatasetInfo);
     }
 
@@ -7022,6 +7066,7 @@ BOOST_CLASS_EXPORT_KEY(karto::Name);
 BOOST_CLASS_EXPORT_KEY(karto::SensorData);
 BOOST_CLASS_EXPORT_KEY(karto::LocalizedRangeScan);
 BOOST_CLASS_EXPORT_KEY(karto::LaserRangeScan);
+BOOST_CLASS_EXPORT_KEY(karto::LaserRangeFinder);
 BOOST_CLASS_EXPORT_KEY(karto::CustomData);
 BOOST_CLASS_EXPORT_KEY(karto::Module);
 BOOST_CLASS_EXPORT_KEY(karto::Rectangle2<kt_double>);

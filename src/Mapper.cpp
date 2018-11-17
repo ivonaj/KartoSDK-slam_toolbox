@@ -2259,9 +2259,7 @@ namespace karto
     printf("Save To File\n");
     std::ofstream ofs(filename.c_str());
     boost::archive::binary_oarchive oa(ofs, boost::archive::no_codecvt);
-//    oa.register_type<ScanMatcher>();
     oa << BOOST_SERIALIZATION_NVP(*this);
-//    oa << BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
   }
 
   void Mapper::LoadFromFile(const std::string& filename) 
@@ -2270,7 +2268,6 @@ namespace karto
     std::ifstream ifs(filename.c_str());
     boost::archive::binary_iarchive ia(ifs, boost::archive::no_codecvt);
     ia >> BOOST_SERIALIZATION_NVP(*this);
-//    ia >> BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
   }
 
   void Mapper::Reset()
