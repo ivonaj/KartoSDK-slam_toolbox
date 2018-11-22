@@ -35,6 +35,7 @@ BOOST_CLASS_EXPORT_IMPLEMENT(karto::CustomData);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::Module);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::LaserRangeFinder);
 BOOST_CLASS_EXPORT(karto::Dataset);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::LookupArray);
 
 namespace karto
 {

@@ -1353,8 +1353,11 @@ namespace karto
     {
       std::cout<<"ScanMatcher";
       ar & BOOST_SERIALIZATION_NVP(m_pMapper);
+      std::cout<<"Correlationgrid";
       ar & BOOST_SERIALIZATION_NVP(m_pCorrelationGrid);
+      std::cout<<"searchspaceprobs";
       ar & BOOST_SERIALIZATION_NVP(m_pSearchSpaceProbs);
+      std::cout<<"mpGridLookup";
       ar & BOOST_SERIALIZATION_NVP(m_pGridLookup);
 
     }
@@ -2100,7 +2103,7 @@ namespace karto
     {
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Module);
       ar & BOOST_SERIALIZATION_NVP(m_Initialized);
-//      ar & BOOST_SERIALIZATION_NVP(m_pSequentialScanMatcher);
+      ar & BOOST_SERIALIZATION_NVP(m_pSequentialScanMatcher);
       ar & BOOST_SERIALIZATION_NVP(m_pGraph);
       ar & BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
 //      ar & BOOST_SERIALIZATION_NVP(m_pScanOptimizer);

@@ -6598,28 +6598,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-//		int idx = 0;
-//		for (std::map<Name,Sensor*>::iterator it=m_SensorNameLookup.begin(); it!=m_SensorNameLookup.end(); ++it)
-//		{
-//			std::cout << it->first << " => " << it->second << '\n';
-//
-//			std::stringstream ss1;
-//			std::stringstream ss2;
-//			ss1 << "m_SensorNameLookup_" << idx << "_Name";
-//			ss2 << "m_SensorNameLookup_" << idx << "_Sensor";
-//			std::string tag1 = ss1.str();
-//			std::string tag2 = ss2.str();
-//			ar & boost::serialization::make_nvp(tag1.c_str(), it->first);
-//			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
-//			idx++;
-//		}
-//		for(size_t i = 0; i < m_Objects.size(); ++i)
-//		{
-//			std::stringstream ss;
-//			ss << "m_Objects_" << i;
-//			std::string tag_mObjects = ss.str();
-//			ar & boost::serialization::make_nvp(tag_mObjects.c_str(), *m_Objects[i]);
-//		}
       std::cout<<"m_SensorNameLookup";
       ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
       std::cout<<"m_Objects";
@@ -6751,13 +6729,15 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       template<class Archive>
       void serialize(Archive &ar, const unsigned int version)
       {
+        ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+        ar & BOOST_SERIALIZATION_NVP(m_Size);
         if (Archive::is_loading::value)
         {
           m_pArray = new kt_int32s[m_Capacity];
         }
         ar & boost::serialization::make_array<kt_int32s >(m_pArray, m_Capacity);
-        ar & BOOST_SERIALIZATION_NVP(m_Capacity);
-        ar & BOOST_SERIALIZATION_NVP(m_Size);
+
+
       }
   };  // LookupArray
 
@@ -6990,7 +6970,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       {
         ar & BOOST_SERIALIZATION_NVP(m_pGrid);
         ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+        std::cout<<m_Capacity;
         ar & BOOST_SERIALIZATION_NVP(m_Size);
+        std::cout<<m_Size;
         ar & BOOST_SERIALIZATION_NVP(m_Angles);
 
         if (Archive::is_loading::value)
@@ -7002,6 +6984,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
           }
         }
         ar & boost::serialization::make_array<LookupArray*>(m_ppLookupArray, m_Capacity);
+//
       }
 	  };  // class GridIndexLookup
 
@@ -7076,6 +7059,6 @@ BOOST_CLASS_EXPORT_KEY(karto::CoordinateConverter);
 BOOST_CLASS_EXPORT_KEY(karto::Size2<kt_double>);
 //BOOST_CLASS_EXPORT(karto::Size2<kt_int32s>);
 BOOST_CLASS_EXPORT_KEY(karto::GridIndexLookup<kt_int8u>);
-//BOOST_CLASS_EXPORT(karto::LookupArray);
+BOOST_CLASS_EXPORT_KEY(karto::LookupArray);
 //BOOST_CLASS_EXPORT_KEY(karto::Parameter);
 #endif  // OPEN_KARTO_KARTO_H
