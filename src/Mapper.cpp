@@ -29,16 +29,10 @@
 
 #include "open_karto/Mapper.h"
 
-//BOOST_CLASS_EXPORT(karto::ScanMatcher);
-//BOOST_CLASS_EXPORT(karto::MapperSensorManager);
-//BOOST_CLASS_EXPORT(karto::ScanSolver);
-//BOOST_CLASS_EXPORT(karto::Mapper);
 BOOST_CLASS_EXPORT(karto::MapperGraph);
 BOOST_CLASS_EXPORT(karto::Graph<karto::LocalizedRangeScan>);
 BOOST_CLASS_EXPORT(karto::EdgeLabel);
 BOOST_CLASS_EXPORT(karto::LinkInfo);
-//BOOST_CLASS_EXPORT(karto::GraphTraversal<karto::LocalizedRangeScan>);
-//BOOST_CLASS_EXPORT(karto::CorrelationGrid);
 BOOST_CLASS_EXPORT(karto::Edge<karto::LocalizedRangeScan>);
 BOOST_CLASS_EXPORT(karto::Vertex<karto::LocalizedRangeScan>);
 namespace karto

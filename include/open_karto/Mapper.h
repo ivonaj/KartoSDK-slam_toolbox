@@ -2202,11 +2202,3 @@ namespace karto
 }  // namespace karto
 
 #endif  // OPEN_KARTO_MAPPER_H
-//BOOST_CLASS_EXPORT_KEY(karto::MapperGraph);
-//BOOST_CLASS_EXPORT_KEY(karto::ScanMatcher);
-//BOOST_CLASS_EXPORT(karto::Graph<karto::LocalizedRangeScan>);
-//BOOST_CLASS_EXPORT_KEY(karto::CorrelationGrid);
-//BOOST_CLASS_EXPORT(karto::Edge<karto::LocalizedRangeScan>);
-//BOOST_CLASS_EXPORT(karto::Vertex<karto::LocalizedRangeScan>);
-//BOOST_CLASS_EXPORT(karto::EdgeLabel);
-//BOOST_CLASS_EXPORT_KEY(karto::Mapper);
