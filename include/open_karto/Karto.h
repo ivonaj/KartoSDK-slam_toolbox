@@ -361,7 +361,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		//ar & BOOST_SERIALIZATION_NVP(m_Parameters);
 		for(size_t i = 0; i < m_Parameters.size(); ++i)
 		{
 			std::stringstream ss;
@@ -385,7 +384,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
 			idx++;
 		}
-        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
 	}
 
 
@@ -3623,14 +3622,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   	/**
   	 * Serialization: class Sensor 
   	 */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object); 
-		ar & BOOST_SERIALIZATION_NVP(m_pOffsetPose);
-	}
-
   public:
     Sensor()
     {
@@ -3700,6 +3691,13 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Sensor offset pose
      */
     Parameter<Pose2>* m_pOffsetPose;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
+      ar & BOOST_SERIALIZATION_NVP(m_pOffsetPose);
+    }
   };  // Sensor
   BOOST_SERIALIZATION_ASSUME_ABSTRACT(Sensor)
   /**
@@ -3750,7 +3748,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * @param override
      * @return true if sensor is registered with SensorManager, false if Sensor name is not unique
      */
-    void RegisterSensor(Sensor* pSensor, kt_bool override = false)
+    void RegisterSensor(Sensor* pSensor, kt_bool override = true)
     {
       Validate(pSensor);
 
@@ -3852,6 +3850,12 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Sensor map
      */
     SensorManagerMap m_Sensors;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Sensors);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -6474,6 +6478,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
       ar & BOOST_SERIALIZATION_NVP(*m_pTitle);
       ar & BOOST_SERIALIZATION_NVP(*m_pAuthor);
       ar & BOOST_SERIALIZATION_NVP(*m_pDescription);
@@ -6591,20 +6596,19 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 	std::map<Name, Sensor*> m_SensorNameLookup;
 	ObjectVector m_Objects;
 	DatasetInfo* m_pDatasetInfo;
-    /**
-     * Serialization: class Dataset
-     */
-    friend class boost::serialization::access;
-    template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
-      std::cout<<"m_SensorNameLookup";
-      ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
-      std::cout<<"m_Objects";
-      ar & BOOST_SERIALIZATION_NVP(m_Objects);
-      std::cout<<"m_pDatasetInfo";
-      ar & BOOST_SERIALIZATION_NVP(m_pDatasetInfo);
-    }
+  /**
+   * Serialization: class Dataset
+   */
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive &ar, const unsigned int version)
+  {
+    std::cout<<"Serializing Dataset\n";
+    ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
+    ar & BOOST_SERIALIZATION_NVP(m_Objects);
+    ar & BOOST_SERIALIZATION_NVP(m_pDatasetInfo);
+    std::cout<<"Finished serializing Dataset\n";
+  }
 
   };  // Dataset
   BOOST_SERIALIZATION_ASSUME_ABSTRACT(Dataset)
@@ -6970,11 +6974,8 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       {
         ar & BOOST_SERIALIZATION_NVP(m_pGrid);
         ar & BOOST_SERIALIZATION_NVP(m_Capacity);
-        std::cout<<m_Capacity;
         ar & BOOST_SERIALIZATION_NVP(m_Size);
-        std::cout<<m_Size;
         ar & BOOST_SERIALIZATION_NVP(m_Angles);
-
         if (Archive::is_loading::value)
         {
           m_ppLookupArray = new LookupArray*[m_Capacity];
@@ -6984,7 +6985,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
           }
         }
         ar & boost::serialization::make_array<LookupArray*>(m_ppLookupArray, m_Capacity);
-//
       }
 	  };  // class GridIndexLookup
 
@@ -7054,6 +7054,8 @@ BOOST_CLASS_EXPORT_KEY(karto::CustomData);
 BOOST_CLASS_EXPORT_KEY(karto::Module);
 BOOST_CLASS_EXPORT_KEY(karto::Rectangle2<kt_double>);
 BOOST_CLASS_EXPORT_KEY(karto::CoordinateConverter);
+BOOST_CLASS_EXPORT_KEY(karto::Dataset);
+BOOST_CLASS_EXPORT_KEY(karto::SensorManager);
 //BOOST_CLASS_EXPORT_KEY(karto::Grid<kt_double>);
 //BOOST_CLASS_EXPORT(karto::Grid<kt_int32s>)
 BOOST_CLASS_EXPORT_KEY(karto::Size2<kt_double>);
