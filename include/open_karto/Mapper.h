@@ -23,6 +23,12 @@
 
 #include <Eigen/Core>
 
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+#include "tbb/tbb.h"
+#include <algorithm>
+#include <chrono>
+
 #include <open_karto/Karto.h>
 
 namespace karto
@@ -1183,6 +1189,11 @@ namespace karto
 
   public:
     /**
+     * Parallelize scan matching
+     */
+    void operator() (const kt_double& y) const;
+
+    /**
      * Create a scan matcher with the given parameters
      */
     static ScanMatcher* Create(Mapper* pMapper,
@@ -1323,11 +1334,18 @@ namespace karto
 
   private:
     Mapper* m_pMapper;
-
     CorrelationGrid* m_pCorrelationGrid;
     Grid<kt_double>* m_pSearchSpaceProbs;
-
     GridIndexLookup<kt_int8u>* m_pGridLookup;
+    std::pair<kt_double, Pose2>* m_pPoseResponse;
+    std::vector<kt_double> m_xPoses;
+    std::vector<kt_double> m_yPoses;
+    Pose2 m_rSearchCenter;
+    kt_double m_searchAngleOffset;
+    kt_int32u m_nAngles;
+    kt_double m_searchAngleResolution;
+    kt_bool m_doPenalize;
+
     /**
      * Serialization: class ScanMatcher
      */
@@ -1339,8 +1357,16 @@ namespace karto
       ar & BOOST_SERIALIZATION_NVP(m_pCorrelationGrid);
       ar & BOOST_SERIALIZATION_NVP(m_pSearchSpaceProbs);
       ar & BOOST_SERIALIZATION_NVP(m_pGridLookup);
-
+      ar & BOOST_SERIALIZATION_NVP(m_pPoseResponse);
+      ar & BOOST_SERIALIZATION_NVP(m_xPoses);
+      ar & BOOST_SERIALIZATION_NVP(m_yPoses);
+      ar & BOOST_SERIALIZATION_NVP(m_rSearchCenter);
+      ar & BOOST_SERIALIZATION_NVP(m_searchAngleResolution);
+      ar & BOOST_SERIALIZATION_NVP(m_nAngles);
+      ar & BOOST_SERIALIZATION_NVP(m_searchAngleResolution);
+      ar & BOOST_SERIALIZATION_NVP(m_doPenalize);
     }
+
   };  // ScanMatcher
 
   ////////////////////////////////////////////////////////////////////////////////////////

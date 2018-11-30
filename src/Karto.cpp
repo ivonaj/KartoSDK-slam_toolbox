@@ -38,7 +38,6 @@ BOOST_CLASS_EXPORT_IMPLEMENT(karto::Dataset);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::LookupArray);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::SensorManager);
 
-
 namespace karto
 {
 

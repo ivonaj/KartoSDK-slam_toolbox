@@ -49,7 +49,6 @@
 #include <boost/serialization/array.hpp>
 #include <boost/version.hpp>
 
-
 #ifdef USE_POCO
 #include <Poco/Mutex.h>
 #endif
@@ -384,7 +383,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
 			idx++;
 		}
-		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
 	}
 
 
@@ -730,7 +729,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
       return m_pParameterManager->GetParameterVector();
     }
 
-  private:
     Object(const Object&);
     const Object& operator=(const Object&);
 
@@ -5775,21 +5773,21 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     }
 
     /**
-     * Serialization: class LocalizedRangeScan 
+     * Serialization: class LocalizedRangeScan
      */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(m_OdometricPose);
-		ar & BOOST_SERIALIZATION_NVP(m_CorrectedPose);
-		ar & BOOST_SERIALIZATION_NVP(m_BarycenterPose);
-		ar & BOOST_SERIALIZATION_NVP(m_PointReadings);
-		ar & BOOST_SERIALIZATION_NVP(m_UnfilteredPointReadings);
-		ar & BOOST_SERIALIZATION_NVP(m_BoundingBox);
-		ar & BOOST_SERIALIZATION_NVP(m_IsDirty);
-		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LaserRangeScan);
-	}
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_OdometricPose);
+      ar & BOOST_SERIALIZATION_NVP(m_CorrectedPose);
+      ar & BOOST_SERIALIZATION_NVP(m_BarycenterPose);
+      ar & BOOST_SERIALIZATION_NVP(m_PointReadings);
+      ar & BOOST_SERIALIZATION_NVP(m_UnfilteredPointReadings);
+      ar & BOOST_SERIALIZATION_NVP(m_BoundingBox);
+      ar & BOOST_SERIALIZATION_NVP(m_IsDirty);
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LaserRangeScan);
+    }
 
 
   private:
@@ -6770,7 +6768,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 			   * Construct a GridIndexLookup with a grid
 			   * @param pGrid
 			   */
-       GridIndexLookup() = default;
+       GridIndexLookup()
+        {
+        }
 			  GridIndexLookup(Grid<T>* pGrid)
 				  : m_pGrid(pGrid)
 					, m_Capacity(0)
@@ -7056,11 +7056,7 @@ BOOST_CLASS_EXPORT_KEY(karto::Rectangle2<kt_double>);
 BOOST_CLASS_EXPORT_KEY(karto::CoordinateConverter);
 BOOST_CLASS_EXPORT_KEY(karto::Dataset);
 BOOST_CLASS_EXPORT_KEY(karto::SensorManager);
-//BOOST_CLASS_EXPORT_KEY(karto::Grid<kt_double>);
-//BOOST_CLASS_EXPORT(karto::Grid<kt_int32s>)
 BOOST_CLASS_EXPORT_KEY(karto::Size2<kt_double>);
-//BOOST_CLASS_EXPORT(karto::Size2<kt_int32s>);
 BOOST_CLASS_EXPORT_KEY(karto::GridIndexLookup<kt_int8u>);
 BOOST_CLASS_EXPORT_KEY(karto::LookupArray);
-//BOOST_CLASS_EXPORT_KEY(karto::Parameter);
 #endif  // OPEN_KARTO_KARTO_H
