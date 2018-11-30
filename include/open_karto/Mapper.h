@@ -1357,7 +1357,6 @@ namespace karto
       ar & BOOST_SERIALIZATION_NVP(m_pCorrelationGrid);
       ar & BOOST_SERIALIZATION_NVP(m_pSearchSpaceProbs);
       ar & BOOST_SERIALIZATION_NVP(m_pGridLookup);
-      ar & BOOST_SERIALIZATION_NVP(m_pPoseResponse);
       ar & BOOST_SERIALIZATION_NVP(m_xPoses);
       ar & BOOST_SERIALIZATION_NVP(m_yPoses);
       ar & BOOST_SERIALIZATION_NVP(m_rSearchCenter);
@@ -1365,6 +1364,13 @@ namespace karto
       ar & BOOST_SERIALIZATION_NVP(m_nAngles);
       ar & BOOST_SERIALIZATION_NVP(m_searchAngleResolution);
       ar & BOOST_SERIALIZATION_NVP(m_doPenalize);
+
+      kt_int32u poseResponseSize = static_cast<kt_int32u>(m_xPoses.size() * m_yPoses.size() * m_nAngles);
+      if (Archive::is_loading::value)
+      {
+        m_pPoseResponse = new std::pair<kt_double, Pose2>[poseResponseSize];
+      }
+      ar & boost::serialization::make_array<std::pair<kt_double, Pose2>>(m_pPoseResponse, poseResponseSize);
     }
 
   };  // ScanMatcher
