@@ -6578,7 +6578,11 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
 
       forEach(ObjectVector, &m_Objects)
       {
-        delete *iter;
+        if(*iter)
+        {
+          delete *iter;
+          *iter = NULL;
+        }
       }
 
       m_Objects.clear();
