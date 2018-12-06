@@ -198,8 +198,6 @@ namespace karto
 	}
   };  // class NonCopyable
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
-
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -356,36 +354,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     /**
      * Serialization: class ParameterManager 
      */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		for(size_t i = 0; i < m_Parameters.size(); ++i)
-		{
-			std::stringstream ss;
-			ss << "m_Parameters_" << i;
-			std::string tag_mParameters = ss.str();
-			ar & boost::serialization::make_nvp(tag_mParameters.c_str(), *m_Parameters[i]);
-		}
-
-		int idx = 0;
-		for (std::map<std::string,AbstractParameter*>::iterator it=m_ParameterLookup.begin(); it!=m_ParameterLookup.end(); ++it)
-		{
-			std::cout << it->first << " => " << it->second << '\n';
-
-			std::stringstream ss1;
-			std::stringstream ss2;
-			ss1 << "m_ParameterLookup_" << idx << "_String";
-			ss2 << "m_ParameterLookup" << idx << "_AbstractParameter";
-			std::string tag1 = ss1.str();
-			std::string tag2 = ss2.str();
-			ar & boost::serialization::make_nvp(tag1.c_str(), it->first);
-			ar & boost::serialization::make_nvp(tag2.c_str(), *it->second);
-			idx++;
-		}
-        ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
-	}
-
 
   private:
     ParameterManager(const ParameterManager&);
@@ -394,6 +362,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     ParameterVector m_Parameters;
     std::map<std::string, AbstractParameter*> m_ParameterLookup;
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+      ar & BOOST_SERIALIZATION_NVP(m_Parameters);
+      ar & BOOST_SERIALIZATION_NVP(m_ParameterLookup);
+    }
+
   };  // ParameterManager
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -743,6 +721,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
     void serialize(Archive &ar, const unsigned int version)
     {
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+      ar & BOOST_SERIALIZATION_NVP(m_pParameterManager);
       ar & BOOST_SERIALIZATION_NVP(m_Name);
     }
   };
@@ -3122,17 +3101,6 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   class AbstractParameter
   {
 
-    /**
-     * Serialization: class AbstractParameter 
-     */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_NVP(m_Name);
-		ar & BOOST_SERIALIZATION_NVP(m_Description);
-	}
-
   public:
     AbstractParameter()
     {
@@ -3233,6 +3201,16 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
   private:
     std::string m_Name;
     std::string m_Description;
+    /**
+   * Serialization: class AbstractParameter
+   */
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      ar & BOOST_SERIALIZATION_NVP(m_Name);
+      ar & BOOST_SERIALIZATION_NVP(m_Description);
+    }
   };  // AbstractParameter
   BOOST_SERIALIZATION_ASSUME_ABSTRACT(AbstractParameter)
 
@@ -3581,6 +3559,9 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Parameters
      * @param rName
      */
+    Parameters()
+    {
+    }
     Parameters(const std::string& rName)
       : Object(rName)
     {
@@ -3746,7 +3727,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * @param override
      * @return true if sensor is registered with SensorManager, false if Sensor name is not unique
      */
-    void RegisterSensor(Sensor* pSensor, kt_bool override = true)
+    void RegisterSensor(Sensor* pSensor, kt_bool override = false)
     {
       Validate(pSensor);
 
@@ -6516,7 +6497,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
      * Adds object to this dataset
      * @param pObject
      */
-    void Add(Object* pObject)
+    void Add(Object* pObject, kt_bool overrideSensorName = false)
     {
       if (pObject != NULL)
       {
@@ -6527,7 +6508,7 @@ BOOST_SERIALIZATION_ASSUME_ABSTRACT(NonCopyable)
           {
             m_SensorNameLookup[pSensor->GetName()] = pSensor;
 
-            karto::SensorManager::GetInstance()->RegisterSensor(pSensor);
+            karto::SensorManager::GetInstance()->RegisterSensor(pSensor, overrideSensorName);
           }
 
           m_Objects.push_back(pObject);
@@ -7063,4 +7044,15 @@ BOOST_CLASS_EXPORT_KEY(karto::SensorManager);
 BOOST_CLASS_EXPORT_KEY(karto::Size2<kt_double>);
 BOOST_CLASS_EXPORT_KEY(karto::GridIndexLookup<kt_int8u>);
 BOOST_CLASS_EXPORT_KEY(karto::LookupArray);
+BOOST_CLASS_EXPORT_KEY(karto::AbstractParameter);
+BOOST_CLASS_EXPORT_KEY(karto::ParameterEnum);
+BOOST_CLASS_EXPORT_KEY(karto::Parameters);
+BOOST_CLASS_EXPORT_KEY(karto::ParameterManager);
+BOOST_CLASS_EXPORT_KEY(karto::Parameter<kt_double >);
+BOOST_CLASS_EXPORT_KEY(karto::Parameter<karto::Pose2>);
+BOOST_CLASS_EXPORT_KEY(karto::Parameter<kt_bool>);
+BOOST_CLASS_EXPORT_KEY(karto::Parameter<kt_int32u>);
+BOOST_CLASS_EXPORT_KEY(karto::Parameter<kt_int32s>);
+BOOST_CLASS_EXPORT_KEY(karto::Parameter<std::string>);
+
 #endif  // OPEN_KARTO_KARTO_H

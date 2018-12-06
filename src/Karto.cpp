@@ -37,7 +37,16 @@ BOOST_CLASS_EXPORT_IMPLEMENT(karto::LaserRangeFinder);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::Dataset);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::LookupArray);
 BOOST_CLASS_EXPORT_IMPLEMENT(karto::SensorManager);
-
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::AbstractParameter);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::ParameterEnum);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameters);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::ParameterManager);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameter<kt_double >);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameter<karto::Pose2>);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameter<kt_bool>);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameter<kt_int32u>);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameter<kt_int32s>);
+BOOST_CLASS_EXPORT_IMPLEMENT(karto::Parameter<std::string>);
 namespace karto
 {
 
