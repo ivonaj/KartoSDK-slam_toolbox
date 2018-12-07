@@ -352,7 +352,7 @@ namespace karto
     }
 
     /**
-     * Serialization: class ParameterManager 
+     * Serialization: class ParameterManager
      */
 
   private:
@@ -2949,7 +2949,7 @@ namespace karto
     }
 
     /**
-     * Serialization: class BoundingBox2 
+     * Serialization: class BoundingBox2
      */
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -3335,7 +3335,7 @@ namespace karto
     }
 
     /**
-     * Serialization: class Parameter 
+     * Serialization: class Parameter
      */
 	friend class boost::serialization::access;
 	template<class Archive>
@@ -3599,7 +3599,7 @@ namespace karto
   {
 
   	/**
-  	 * Serialization: class Sensor 
+  	 * Serialization: class Sensor
   	 */
   public:
     Sensor()
@@ -6441,7 +6441,7 @@ namespace karto
     }
 
     /**
-     * Serialization: class DatasetInfo 
+     * Serialization: class DatasetInfo
      */
 
   private:
@@ -6929,19 +6929,19 @@ namespace karto
 			   */
 			  void DestroyArrays()
 			  {
-			    if (m_ppLookupArray)
+          if (m_ppLookupArray)
           {
             for (kt_int32u i = 0; i < m_Capacity; i++)
             {
               delete m_ppLookupArray[i];
             }
           }
-				  if (m_ppLookupArray)
+          if (m_ppLookupArray)
           {
-            delete[] m_ppLookupArray;
-            m_ppLookupArray = NULL;
-          }
-			  }
+              delete[] m_ppLookupArray;
+              m_ppLookupArray = NULL;
+           }
+        }
 
 		  private:
 			  Grid<T>* m_pGrid;
@@ -6953,24 +6953,24 @@ namespace karto
 
 			  // for sanity check
 			  std::vector<kt_double> m_Angles;
-      friend class boost::serialization::access;
-      template<class Archive>
-      void serialize(Archive &ar, const unsigned int version)
-      {
-        ar & BOOST_SERIALIZATION_NVP(m_pGrid);
-        ar & BOOST_SERIALIZATION_NVP(m_Capacity);
-        ar & BOOST_SERIALIZATION_NVP(m_Size);
-        ar & BOOST_SERIALIZATION_NVP(m_Angles);
-        if (Archive::is_loading::value)
+        friend class boost::serialization::access;
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version)
         {
-          m_ppLookupArray = new LookupArray*[m_Capacity];
-          for (kt_int32u i = 0; i < m_Capacity; i++)
+          ar & BOOST_SERIALIZATION_NVP(m_pGrid);
+          ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+          ar & BOOST_SERIALIZATION_NVP(m_Size);
+          ar & BOOST_SERIALIZATION_NVP(m_Angles);
+          if (Archive::is_loading::value)
           {
-            m_ppLookupArray[i] = new LookupArray();
+            m_ppLookupArray = new LookupArray*[m_Capacity];
+            for (kt_int32u i = 0; i < m_Capacity; i++)
+            {
+              m_ppLookupArray[i] = new LookupArray();
+            }
           }
+          ar & boost::serialization::make_array<LookupArray*>(m_ppLookupArray, m_Capacity);
         }
-        ar & boost::serialization::make_array<LookupArray*>(m_ppLookupArray, m_Capacity);
-      }
 	  };  // class GridIndexLookup
 
   ////////////////////////////////////////////////////////////////////////////////////////
