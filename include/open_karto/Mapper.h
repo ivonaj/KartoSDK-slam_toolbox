@@ -227,10 +227,15 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"LinkInfo <- EdgeLabel ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EdgeLabel);
+      std::cout<<"LinkInfo <- m_Pose1 ";
       ar & BOOST_SERIALIZATION_NVP(m_Pose1);
+      std::cout<<"LinkInfo <- m_Pose2 ";
       ar & BOOST_SERIALIZATION_NVP(m_Pose2);
+      std::cout<<"LinkInfo <- m_PoseDifference ";
       ar & BOOST_SERIALIZATION_NVP(m_PoseDifference);
+      std::cout<<"LinkInfo <- m_Covariance\n";
       ar & BOOST_SERIALIZATION_NVP(m_Covariance);
     }
   };  // LinkInfo
@@ -332,7 +337,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Vertex <- m_pObject ";
       ar & BOOST_SERIALIZATION_NVP(m_pObject);
+      std::cout<<"Vertwx <- m_Edges\n";
       ar & BOOST_SERIALIZATION_NVP(m_Edges);
     }
   };  // Vertex<T>
@@ -426,8 +433,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Edge <- m_pSource ";
       ar & BOOST_SERIALIZATION_NVP(m_pSource);
+      std::cout<<"Edge <- m_pTarget ";
       ar & BOOST_SERIALIZATION_NVP(m_pTarget);
+      std::cout<<"Edge <- m_pLabel\n";
       ar & BOOST_SERIALIZATION_NVP(m_pLabel);
     }
   };  // class Edge<T>
@@ -507,6 +517,7 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"GraphTraversal <- m_pGraph\n";
       ar & BOOST_SERIALIZATION_NVP(m_pGraph);
     }
   };  // GraphTraversal<T>
@@ -621,7 +632,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Graph <- m_Edges ";
       ar & BOOST_SERIALIZATION_NVP(m_Edges);
+      std::cout<<"Graph<- m_Vertices\n";
       ar & BOOST_SERIALIZATION_NVP(m_Vertices);
     }
   };  // Graph<T>
@@ -807,9 +820,13 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"MapperGraph <- Graph ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Graph<LocalizedRangeScan>);
+      std::cout<<"MapperGraph <- m_pMapper ";
       ar & BOOST_SERIALIZATION_NVP(m_pMapper);
+      std::cout<<"MapperGraph <- m_pLoopScanMatcher ";
       ar & BOOST_SERIALIZATION_NVP(m_pLoopScanMatcher);
+      std::cout<<"MapperGraph <- m_pTraversal\n";
       ar & BOOST_SERIALIZATION_NVP(m_pTraversal);
     }
 
@@ -1157,14 +1174,19 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"CorrelationGrid <- Grid ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Grid<kt_int8u>);
+      std::cout<<"CorrelationGrid <- m_SmearDeaviation ";
       ar & BOOST_SERIALIZATION_NVP(m_SmearDeviation);
+      std::cout<<"CorrelationGrid <- m_KernelSize ";
       ar & BOOST_SERIALIZATION_NVP(m_KernelSize);
       if (Archive::is_loading::value)
       {
         m_pKernel = new kt_int8u[m_KernelSize * m_KernelSize];
       }
+      std::cout<<"CorrelationGrid <- m_pKernel ";
       ar & boost::serialization::make_array<kt_int8u>(m_pKernel, m_KernelSize * m_KernelSize);
+      std::cout<<"CorrelationGrid <- m_Roi\n";
       ar & BOOST_SERIALIZATION_NVP(m_Roi);
     }
   };  // CorrelationGrid
@@ -1353,18 +1375,29 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"ScanMatcher <- m_pMapper ";
       ar & BOOST_SERIALIZATION_NVP(m_pMapper);
+      std::cout<<"ScanMatcher <- m_pCorrelationGrid ";
       ar & BOOST_SERIALIZATION_NVP(m_pCorrelationGrid);
+      std::cout<<"ScanMatcher <- m_pSearchSpaceProbs ";
       ar & BOOST_SERIALIZATION_NVP(m_pSearchSpaceProbs);
+      std::cout<<"ScanMatcher <- m_pGridLookup ";
       ar & BOOST_SERIALIZATION_NVP(m_pGridLookup);
+      std::cout<<"ScanMatcher <- m_xPoses ";
       ar & BOOST_SERIALIZATION_NVP(m_xPoses);
+      std::cout<<"ScanMatcher <- m_yPoses ";
       ar & BOOST_SERIALIZATION_NVP(m_yPoses);
+      std::cout<<"ScanMatcher <- m_rSearchCenter ";
       ar & BOOST_SERIALIZATION_NVP(m_rSearchCenter);
+      std::cout<<"ScanMatcher <- m_searchAngleResolution ";
       ar & BOOST_SERIALIZATION_NVP(m_searchAngleResolution);
+      std::cout<<"ScanMatcher <- m_nAngles ";
       ar & BOOST_SERIALIZATION_NVP(m_nAngles);
+      std::cout<<"ScanMatcher <- m_searchAngleResolution ";
       ar & BOOST_SERIALIZATION_NVP(m_searchAngleResolution);
+      std::cout<<"ScanMatcher <- m_doPenalize ";
       ar & BOOST_SERIALIZATION_NVP(m_doPenalize);
-
+      std::cout<<"ScanMatcher <- m_pPoseResponse\n";
       kt_int32u poseResponseSize = static_cast<kt_int32u>(m_xPoses.size() * m_yPoses.size() * m_nAngles);
       if (Archive::is_loading::value)
       {
@@ -1532,11 +1565,16 @@ namespace karto
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_NVP(m_ScanManagers);
-		ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumSize);
-		ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumDistance);
-		ar & BOOST_SERIALIZATION_NVP(m_NextScanId);
-		ar & BOOST_SERIALIZATION_NVP(m_Scans);
+    std::cout<<"MapperSensorManager <- m_ScanManagers ";
+    ar & BOOST_SERIALIZATION_NVP(m_ScanManagers);
+    std::cout<<"MapperSensorManager <- m_RunningBufferMaximumSize ";
+    ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumSize);
+    std::cout<<"MapperSensorManager <- m_RunningBufferMaximumDistance ";
+    ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumDistance);
+    std::cout<<"MapperSensorManager <- m_NextScanId ";
+    ar & BOOST_SERIALIZATION_NVP(m_NextScanId);
+    std::cout<<"MapperSensorManager <- m_Scans ";
+    ar & BOOST_SERIALIZATION_NVP(m_Scans);
 	}
 
   private:
@@ -1742,14 +1780,14 @@ namespace karto
     void Initialize(kt_double rangeThreshold);
 
     /**
-     * Save map to file 
-     * @param filename 
+     * Save map to file
+     * @param filename
      */
     void SaveToFile(const std::string& filename);
 
     /**
-     * Load map from file 
-     * @param filename 
+     * Load map from file
+     * @param filename
      */
     void LoadFromFile(const std::string& filename);
 
@@ -2113,12 +2151,17 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-      std::cout<<"Serializing Mapper\n";
+      std::cout<<"**Serializing Mapper**\n";
+      std::cout<<"Mapper <- Module ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Module);
       ar & BOOST_SERIALIZATION_NVP(m_Initialized);
+      std::cout<<"Mapper <- m_pSequentialScanMatcher ";
       ar & BOOST_SERIALIZATION_NVP(m_pSequentialScanMatcher);
+      std::cout<<"Mapper <- m_pGraph ";
       ar & BOOST_SERIALIZATION_NVP(m_pGraph);
+      std::cout<<"Mapper <- m_pMapperSensorManager ";
       ar & BOOST_SERIALIZATION_NVP(m_pMapperSensorManager);
+      std::cout<<"Mapper <- m_Listeners\n";
       ar & BOOST_SERIALIZATION_NVP(m_Listeners);
       ar & BOOST_SERIALIZATION_NVP(m_pUseScanMatching);
       ar & BOOST_SERIALIZATION_NVP(m_pUseScanBarycenter);
@@ -2149,7 +2192,7 @@ namespace karto
       ar & BOOST_SERIALIZATION_NVP(m_pMinimumAnglePenalty);
       ar & BOOST_SERIALIZATION_NVP(m_pMinimumDistancePenalty);
       ar & BOOST_SERIALIZATION_NVP(m_pUseResponseExpansion);
-      std::cout<<"Finished serializing Mapper\n";
+      std::cout<<"**Finished serializing Mapper**\n";
     }
   public:
     /* Abstract methods for parameter setters and getters */

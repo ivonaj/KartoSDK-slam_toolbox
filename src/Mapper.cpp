@@ -167,17 +167,21 @@ namespace karto
     }
 
   private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		//ar & boost::serialization::make_nvp("m_Values_1", m_Values[1]);
-		ar & BOOST_SERIALIZATION_NVP(m_Scans);
-		ar & BOOST_SERIALIZATION_NVP(m_RunningScans);
-		ar & BOOST_SERIALIZATION_NVP(m_pLastScan);
-		ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumSize);
-		ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumDistance);
-	}
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      std::cout<<"ScanManager <- m_Scans\n";
+      ar & BOOST_SERIALIZATION_NVP(m_Scans);
+      std::cout<<"ScanManager <- m_RunningScans\n";
+      ar & BOOST_SERIALIZATION_NVP(m_RunningScans);
+      std::cout<<"ScanManager <- m_pLastScan\n";
+      ar & BOOST_SERIALIZATION_NVP(m_pLastScan);
+      std::cout<<"ScanManager <- m_RunningBufferMaximumSize\n";
+      ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumSize);
+      std::cout<<"ScanManager <- m_RunningBufferMaximumDistance\n";
+      ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumDistance);
+    }
 
   private:
     LocalizedRangeScanVector m_Scans;
@@ -1143,6 +1147,7 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"BreadthFirstSearch <- GraphTraversal\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GraphTraversal<T>);
     }
   };  // class BreadthFirstTraversal
@@ -1179,9 +1184,13 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"NearScanVisitor <- Visitor\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Visitor<LocalizedRangeScan>);
+      std::cout<<"NearScanVisitor<- m_CenterPose\n";
       ar & BOOST_SERIALIZATION_NVP(m_CenterPose);
+      std::cout<<"NearScanVisitor<- m_MaxDistanceSquared\n";
       ar & BOOST_SERIALIZATION_NVP(m_MaxDistanceSquared);
+      std::cout<<"NearScanVisitor<- m_UseScanBarycenter\n";
       ar & BOOST_SERIALIZATION_NVP(m_UseScanBarycenter);
     }
   };  // NearScanVisitor
@@ -2274,7 +2283,7 @@ namespace karto
     oa << BOOST_SERIALIZATION_NVP(*this);
   }
 
-  void Mapper::LoadFromFile(const std::string& filename) 
+  void Mapper::LoadFromFile(const std::string& filename)
   {
     printf("Load From File\n");
     std::ifstream ifs(filename.c_str());

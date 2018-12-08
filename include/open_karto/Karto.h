@@ -367,8 +367,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"ParamterManager <- NonCopyable ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+      std::cout<<"ParamterManager <- m_Parameters ";
       ar & BOOST_SERIALIZATION_NVP(m_Parameters);
+      std::cout<<"ParamterManager <- m_ParameterLookup\n";
       ar & BOOST_SERIALIZATION_NVP(m_ParameterLookup);
     }
 
@@ -618,7 +621,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Name <- m_Name ";
       ar & BOOST_SERIALIZATION_NVP(m_Name);
+      std::cout<<"Name <- m_Scope\n";
       ar & BOOST_SERIALIZATION_NVP(m_Scope);
     }
   };
@@ -720,8 +725,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Object <- NonCopyable ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NonCopyable);
+      std::cout<<"Object <- m_pParameterManager ";
       ar & BOOST_SERIALIZATION_NVP(m_pParameterManager);
+      std::cout<<"Object <- m_Name\n";
       ar & BOOST_SERIALIZATION_NVP(m_Name);
     }
   };
@@ -854,6 +862,7 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Module <- Object\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
     }
   };
@@ -982,7 +991,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Size2 <- m_Width ";
       ar & BOOST_SERIALIZATION_NVP(m_Width);
+      std::cout<<"Size2 <- m_Height\n";
       ar & BOOST_SERIALIZATION_NVP(m_Height);
     }
   };  // Size2<T>
@@ -2027,7 +2038,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Rectangle <- m_Position ";
       ar & BOOST_SERIALIZATION_NVP(m_Position);
+      std::cout<<"Rectangle<- m_Size\n";
       ar & BOOST_SERIALIZATION_NVP(m_Size);
     }
   };  // Rectangle2
@@ -2253,8 +2266,10 @@ namespace karto
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_NVP(m_Position);
-		ar & BOOST_SERIALIZATION_NVP(m_Heading);
+    std::cout<<"Pose2 <- m_Position ";
+    ar & BOOST_SERIALIZATION_NVP(m_Position);
+    std::cout<<"Pose2 <- m_Heading\n";
+    ar & BOOST_SERIALIZATION_NVP(m_Heading);
 	}
 
   private:
@@ -2715,6 +2730,7 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Matrix3<- m_Matrix\n";
       ar & BOOST_SERIALIZATION_NVP(m_Matrix);
     }
   };  // Matrix3
@@ -2955,8 +2971,10 @@ namespace karto
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_NVP(m_Minimum);
-		ar & BOOST_SERIALIZATION_NVP(m_Maximum);
+    std::cout<<"BoundingBox2 <- m_Minimum ";
+    ar & BOOST_SERIALIZATION_NVP(m_Minimum);
+    std::cout<<"BoundingBox2 <- m_Maximum\n";
+    ar & BOOST_SERIALIZATION_NVP(m_Maximum);
 	}
 
   private:
@@ -3066,8 +3084,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Transform <- m_Transform ";
       ar & BOOST_SERIALIZATION_NVP(m_Transform);
+      std::cout<<"Transform <- m_Rotation ";
       ar & BOOST_SERIALIZATION_NVP(m_Rotation);
+      std::cout<<"Transform <- m_InverseRostation\n";
       ar & BOOST_SERIALIZATION_NVP(m_InverseRotation);
     }
   };  // Transform
@@ -3208,7 +3229,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"AbstractParameter <- m_Name ";
       ar & BOOST_SERIALIZATION_NVP(m_Name);
+      std::cout<<"AbstractParameter <- m_Description\n";
       ar & BOOST_SERIALIZATION_NVP(m_Description);
     }
   };  // AbstractParameter
@@ -3337,13 +3360,15 @@ namespace karto
     /**
      * Serialization: class Parameter
      */
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int version)
-	{
-		ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbstractParameter);
-		ar & BOOST_SERIALIZATION_NVP(m_Value);
-	}
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+      std::cout<<"Parameter <- AbstractParameter ";
+      ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbstractParameter);
+      std::cout<<"Parameter <- m_Value\n";
+      ar & BOOST_SERIALIZATION_NVP(m_Value);
+    }
 
   protected:
     /**
@@ -3535,7 +3560,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"ParameterEnum <- Parameter ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Parameter<kt_int32s>);
+      std::cout<<"ParametrsEnum<- m_EnumDefines\n";
       ar & BOOST_SERIALIZATION_NVP(m_EnumDefines);
     }
   };  // ParameterEnum
@@ -3578,6 +3605,7 @@ namespace karto
   template<class Archive>
 	void serialize(Archive &ar, const unsigned int version)
 	{
+    std::cout<<"Parameters <- Object\n";
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
 	}
 
@@ -3674,7 +3702,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Sensor <- Object ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
+      std::cout<<"Sensor <- m_pOffsetPose\n";
       ar & BOOST_SERIALIZATION_NVP(m_pOffsetPose);
     }
   };  // Sensor
@@ -3833,6 +3863,7 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"SensorManager <- m_Sensors\n";
       ar & BOOST_SERIALIZATION_NVP(m_Sensors);
     }
   };
@@ -3892,6 +3923,7 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Drive <- Sensor\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Sensor);
     }
   };  // class Drive
@@ -4384,14 +4416,23 @@ namespace karto
         m_pType = new ParameterEnum("Type", LaserRangeFinder_Custom, GetParameterManager());
       }
 
+      std::cout<<"LaserRangeFinder <- Sensor ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Sensor);
+      std::cout<<"LaserRangeFinder <- m_pMinimumAngle ";
       ar & BOOST_SERIALIZATION_NVP(m_pMinimumAngle);
+      std::cout<<"LaserRangeFinder <- m_pMaximumAngle ";
       ar & BOOST_SERIALIZATION_NVP(m_pMaximumAngle);
+      std::cout<<"LaserRangeFinder <- m_pAngularResolution ";
       ar & BOOST_SERIALIZATION_NVP(m_pAngularResolution);
+      std::cout<<"LaserRangeFinder <- m_pMinimumRange ";
       ar & BOOST_SERIALIZATION_NVP(m_pMinimumRange);
+      std::cout<<"LaserRangeFinder <- m_pMaximumRange ";
       ar & BOOST_SERIALIZATION_NVP(m_pMaximumRange);
+      std::cout<<"LaserRangeFinder <- m_pRangeThreshold ";
       ar & BOOST_SERIALIZATION_NVP(m_pRangeThreshold);
+      std::cout<<"LaserRangeFinder <- m_pType ";
       ar & BOOST_SERIALIZATION_NVP(m_pType);
+      std::cout<<"LaserRangeFinder <- m_NumberOfRangeReadings\n";
       ar & BOOST_SERIALIZATION_NVP(m_NumberOfRangeReadings);
     }
   };  // LaserRangeFinder
@@ -4586,8 +4627,11 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"CoordinateConverted <- m_Size ";
       ar & BOOST_SERIALIZATION_NVP(m_Size);
+      std::cout<<"CoordinateConverter <- m_Scale ";
       ar & BOOST_SERIALIZATION_NVP(m_Scale);
+      std::cout<<"CoordinateConverter <- m_Offset\n";
       ar & BOOST_SERIALIZATION_NVP(m_Offset);
     }
 
@@ -5000,9 +5044,13 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"Grid <- m_Width ";
       ar & BOOST_SERIALIZATION_NVP(m_Width);
+      std::cout<<"Grid<- m_Height ";
       ar & BOOST_SERIALIZATION_NVP(m_Height);
+      std::cout<<"Grid <- m_WidthStep ";
       ar & BOOST_SERIALIZATION_NVP(m_WidthStep);
+      std::cout<<"Grid <- m_pCoordinateConverter\n";
       ar & BOOST_SERIALIZATION_NVP(m_pCoordinateConverter);
 
 
@@ -5067,6 +5115,7 @@ namespace karto
   template<class Archive>
   void serialize(Archive &ar, const unsigned int version)
   {
+    std::cout<<"CustomData <- Object\n";
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
   }
   };
@@ -5225,11 +5274,17 @@ namespace karto
   template<class Archive>
   void serialize(Archive &ar, const unsigned int version)
   {
+    std::cout<<"SensorData <- m_StateId ";
     ar & BOOST_SERIALIZATION_NVP(m_StateId);
+    std::cout<<"SensorData <- m_UniqueId ";
     ar & BOOST_SERIALIZATION_NVP(m_UniqueId);
+    std::cout<<"SensorData <- m_SensorName ";
     ar & BOOST_SERIALIZATION_NVP(m_SensorName);
+    std::cout<<"SensorData <- m_Time ";
     ar & BOOST_SERIALIZATION_NVP(m_Time);
+    std::cout<<"SensorData<- m_CustomData ";
     ar & BOOST_SERIALIZATION_NVP(m_CustomData);
+    std::cout<<"SensorData <- Object\n";
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
   }
 };
@@ -5381,13 +5436,16 @@ namespace karto
   template<class Archive>
   void serialize(Archive &ar, const unsigned int version)
   {
+    std::cout<<"LaserRangeScan <- m_NumberOfRangeReadings ";
     ar & BOOST_SERIALIZATION_NVP(m_NumberOfRangeReadings);
+    std::cout<<"LaserRangeScan <- SensorData ";
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SensorData);
 
    if (Archive::is_loading::value)
    {
      m_pRangeReadings = new kt_double[m_NumberOfRangeReadings];
    }
+   std::cout<<"LaserRangeScan <- m_pRangeReadings\n";
    ar & boost::serialization::make_array<kt_double>(m_pRangeReadings, m_NumberOfRangeReadings);
   }
   };  // LaserRangeScan
@@ -5760,13 +5818,21 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"LocalizedRangeScan <- m_OdometricPose ";
       ar & BOOST_SERIALIZATION_NVP(m_OdometricPose);
+      std::cout<<"LocalizedRangeScan <- m_CorrectedPose ";
       ar & BOOST_SERIALIZATION_NVP(m_CorrectedPose);
+      std::cout<<"LocalizedRangeScan <- m_BarycenterPose ";
       ar & BOOST_SERIALIZATION_NVP(m_BarycenterPose);
+      std::cout<<"LocalizedRangeScan <- m_PointReadings ";
       ar & BOOST_SERIALIZATION_NVP(m_PointReadings);
+      std::cout<<"LocalizedRangeScan <- m_UnfilteredPointReadings ";
       ar & BOOST_SERIALIZATION_NVP(m_UnfilteredPointReadings);
+      std::cout<<"LocalizedRangeScan <- m_BoundingBox ";
       ar & BOOST_SERIALIZATION_NVP(m_BoundingBox);
+      std::cout<<"LocalizedRangeScan <- m_IsDirty ";
       ar & BOOST_SERIALIZATION_NVP(m_IsDirty);
+      std::cout<<"LocalizedRangeScan <- LaserRangeScan\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LaserRangeScan);
     }
 
@@ -6457,10 +6523,15 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
+      std::cout<<"DatasetInfo <- Object ";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Object);
+      std::cout<<"DatasetInfo <- m_pTitle ";
       ar & BOOST_SERIALIZATION_NVP(*m_pTitle);
+      std::cout<<"DatasetInfo <- m_pAuthor ";
       ar & BOOST_SERIALIZATION_NVP(*m_pAuthor);
+      std::cout<<"DatasetInfo<- m_pDescription ";
       ar & BOOST_SERIALIZATION_NVP(*m_pDescription);
+      std::cout<<"DatasetInfo <- m_Copyright\n";
       ar & BOOST_SERIALIZATION_NVP(*m_pCopyright);
     }
   };  // class DatasetInfo
@@ -6586,11 +6657,14 @@ namespace karto
   template<class Archive>
   void serialize(Archive &ar, const unsigned int version)
   {
-    std::cout<<"Serializing Dataset\n";
+    std::cout<<"**Serializing Dataset**\n";
+    std::cout<<"Dataset <- m_SensorNameLookup ";
     ar & BOOST_SERIALIZATION_NVP(m_SensorNameLookup);
+    std::cout<<"Dataset <- m_Objects ";
     ar & BOOST_SERIALIZATION_NVP(m_Objects);
+    std::cout<<"Dataset<- m_pDatasetInfo\n";
     ar & BOOST_SERIALIZATION_NVP(m_pDatasetInfo);
-    std::cout<<"Finished serializing Dataset\n";
+    std::cout<<"**Finished serializing Dataset**\n";
   }
 
   };  // Dataset
@@ -6716,12 +6790,15 @@ namespace karto
       template<class Archive>
       void serialize(Archive &ar, const unsigned int version)
       {
+        std::cout<<"LookupArray <- m_Capacity ";
         ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+        std::cout<<"LookupArray<- m_Size ";
         ar & BOOST_SERIALIZATION_NVP(m_Size);
         if (Archive::is_loading::value)
         {
           m_pArray = new kt_int32s[m_Capacity];
         }
+        std::cout<<"LookupArray<- m_pArray\n";
         ar & boost::serialization::make_array<kt_int32s >(m_pArray, m_Capacity);
 
 
@@ -6957,9 +7034,13 @@ namespace karto
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version)
         {
+          std::cout<<"GridIndexLooup <- m_pGrid ";
           ar & BOOST_SERIALIZATION_NVP(m_pGrid);
+          std::cout<<"GridIndexLookup<- m_Capacity ";
           ar & BOOST_SERIALIZATION_NVP(m_Capacity);
+          std::cout<<"GridIndexLookup<- m_Size ";
           ar & BOOST_SERIALIZATION_NVP(m_Size);
+          std::cout<<"GridIndexLookup<- m_Angles ";
           ar & BOOST_SERIALIZATION_NVP(m_Angles);
           if (Archive::is_loading::value)
           {
@@ -6969,6 +7050,7 @@ namespace karto
               m_ppLookupArray[i] = new LookupArray();
             }
           }
+          std::cout<<"GridIndexLookup <- m_ppLookupArray\n";
           ar & boost::serialization::make_array<LookupArray*>(m_ppLookupArray, m_Capacity);
         }
 	  };  // class GridIndexLookup
