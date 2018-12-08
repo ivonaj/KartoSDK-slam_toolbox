@@ -171,15 +171,10 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-      std::cout<<"ScanManager <- m_Scans\n";
       ar & BOOST_SERIALIZATION_NVP(m_Scans);
-      std::cout<<"ScanManager <- m_RunningScans\n";
       ar & BOOST_SERIALIZATION_NVP(m_RunningScans);
-      std::cout<<"ScanManager <- m_pLastScan\n";
       ar & BOOST_SERIALIZATION_NVP(m_pLastScan);
-      std::cout<<"ScanManager <- m_RunningBufferMaximumSize\n";
       ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumSize);
-      std::cout<<"ScanManager <- m_RunningBufferMaximumDistance\n";
       ar & BOOST_SERIALIZATION_NVP(m_RunningBufferMaximumDistance);
     }
 
@@ -1147,7 +1142,6 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-      std::cout<<"BreadthFirstSearch <- GraphTraversal\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GraphTraversal<T>);
     }
   };  // class BreadthFirstTraversal
@@ -1184,13 +1178,9 @@ namespace karto
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
-      std::cout<<"NearScanVisitor <- Visitor\n";
       ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Visitor<LocalizedRangeScan>);
-      std::cout<<"NearScanVisitor<- m_CenterPose\n";
       ar & BOOST_SERIALIZATION_NVP(m_CenterPose);
-      std::cout<<"NearScanVisitor<- m_MaxDistanceSquared\n";
       ar & BOOST_SERIALIZATION_NVP(m_MaxDistanceSquared);
-      std::cout<<"NearScanVisitor<- m_UseScanBarycenter\n";
       ar & BOOST_SERIALIZATION_NVP(m_UseScanBarycenter);
     }
   };  // NearScanVisitor
